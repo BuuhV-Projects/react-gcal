@@ -130,7 +130,7 @@ export function DayView({ currentDate, events, onTimeSlotClick, onEventClick, on
           {hours.map((hour) => (
             <div
               key={hour}
-              className="h-16 border-b border-border flex items-start justify-end pr-3 -mt-2"
+              className="h-16 border-b border-border flex items-center justify-end pr-3"
             >
               <span className="text-xs text-muted-foreground font-medium">
                 {hour.toString().padStart(2, '0')}:00
