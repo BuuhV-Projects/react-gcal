@@ -12,12 +12,14 @@ import {
 import { ptBR } from 'date-fns/locale';
 import { CalendarEvent } from './types';
 import { cn } from '@/lib/utils';
+import { useState, DragEvent } from 'react';
 
 interface CalendarGridProps {
   currentDate: Date;
   events: CalendarEvent[];
   onDayClick: (date: Date) => void;
   onEventClick: (event: CalendarEvent) => void;
+  onEventDrop: (eventId: string, newDate: Date, newHour?: number) => void;
 }
 
 const eventColorClasses: Record<string, string> = {
@@ -33,7 +35,9 @@ const eventColorClasses: Record<string, string> = {
   graphite: 'bg-event-graphite text-white',
 };
 
-export function CalendarGrid({ currentDate, events, onDayClick, onEventClick }: CalendarGridProps) {
+export function CalendarGrid({ currentDate, events, onDayClick, onEventClick, onEventDrop }: CalendarGridProps) {
+  const [dragOverDate, setDragOverDate] = useState<Date | null>(null);
+  
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
@@ -44,6 +48,30 @@ export function CalendarGrid({ currentDate, events, onDayClick, onEventClick }: 
 
   const getEventsForDay = (day: Date) => {
     return events.filter(event => isSameDay(new Date(event.date), day));
+  };
+
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, event: CalendarEvent) => {
+    e.dataTransfer.setData('eventId', event.id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>, day: Date) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverDate(day);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverDate(null);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>, day: Date) => {
+    e.preventDefault();
+    const eventId = e.dataTransfer.getData('eventId');
+    if (eventId) {
+      onEventDrop(eventId, day);
+    }
+    setDragOverDate(null);
   };
 
   return (
@@ -66,14 +94,19 @@ export function CalendarGrid({ currentDate, events, onDayClick, onEventClick }: 
           const dayEvents = getEventsForDay(day);
           const isCurrentMonth = isSameMonth(day, currentDate);
           const isCurrentDay = isToday(day);
+          const isDragOver = dragOverDate && isSameDay(dragOverDate, day);
 
           return (
             <div
               key={index}
               onClick={() => onDayClick(day)}
+              onDragOver={(e) => handleDragOver(e, day)}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => handleDrop(e, day)}
               className={cn(
                 "min-h-[100px] border-b border-r border-border p-1 cursor-pointer transition-colors hover:bg-accent/50",
-                !isCurrentMonth && "bg-muted/30"
+                !isCurrentMonth && "bg-muted/30",
+                isDragOver && "bg-primary/20 ring-2 ring-primary ring-inset"
               )}
             >
               <div className="flex justify-center mb-1">
@@ -93,12 +126,14 @@ export function CalendarGrid({ currentDate, events, onDayClick, onEventClick }: 
                 {dayEvents.slice(0, 3).map((event) => (
                   <div
                     key={event.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, event)}
                     onClick={(e) => {
                       e.stopPropagation();
                       onEventClick(event);
                     }}
                     className={cn(
-                      "text-xs px-2 py-0.5 rounded truncate cursor-pointer hover:opacity-80 transition-opacity",
+                      "text-xs px-2 py-0.5 rounded truncate cursor-grab active:cursor-grabbing hover:opacity-80 transition-opacity",
                       eventColorClasses[event.color]
                     )}
                   >
