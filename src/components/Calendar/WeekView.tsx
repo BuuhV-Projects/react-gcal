@@ -50,15 +50,20 @@ export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick, o
     return { hours, minutes };
   };
 
+  const HOUR_ROW_PX = 56;
+
   const getEventPosition = (event: CalendarEvent) => {
     const start = parseTime(event.startTime);
     const end = parseTime(event.endTime);
-    
-    const topPercent = (start.hours + start.minutes / 60) * (100 / 24);
-    const durationHours = (end.hours + end.minutes / 60) - (start.hours + start.minutes / 60);
-    const heightPercent = Math.max(durationHours * (100 / 24), 2);
-    
-    return { top: `${topPercent}%`, height: `${heightPercent}%` };
+
+    const startMinutes = start.hours * 60 + start.minutes;
+    const endMinutes = end.hours * 60 + end.minutes;
+    const durationMinutes = Math.max(endMinutes - startMinutes, 15);
+
+    const topPx = (startMinutes / 60) * HOUR_ROW_PX;
+    const heightPx = (durationMinutes / 60) * HOUR_ROW_PX;
+
+    return { top: `${topPx}px`, height: `${heightPx}px` };
   };
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>, event: CalendarEvent) => {

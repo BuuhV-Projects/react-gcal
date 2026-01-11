@@ -43,15 +43,20 @@ export function DayView({ currentDate, events, onTimeSlotClick, onEventClick, on
     return { hours, minutes };
   };
 
+  const HOUR_ROW_PX = 64;
+
   const getEventPosition = (event: CalendarEvent) => {
     const start = parseTime(event.startTime);
     const end = parseTime(event.endTime);
-    
-    const topPercent = (start.hours + start.minutes / 60) * (100 / 24);
-    const durationHours = (end.hours + end.minutes / 60) - (start.hours + start.minutes / 60);
-    const heightPercent = Math.max(durationHours * (100 / 24), 3);
-    
-    return { top: `${topPercent}%`, height: `${heightPercent}%` };
+
+    const startMinutes = start.hours * 60 + start.minutes;
+    const endMinutes = end.hours * 60 + end.minutes;
+    const durationMinutes = Math.max(endMinutes - startMinutes, 15);
+
+    const topPx = (startMinutes / 60) * HOUR_ROW_PX;
+    const heightPx = (durationMinutes / 60) * HOUR_ROW_PX;
+
+    return { top: `${topPx}px`, height: `${heightPx}px` };
   };
 
   const getDurationText = (event: CalendarEvent) => {
@@ -216,7 +221,7 @@ export function DayView({ currentDate, events, onTimeSlotClick, onEventClick, on
 
           {/* Current time indicator */}
           {isCurrentDay && (
-            <CurrentTimeIndicator />
+            <CurrentTimeIndicator hourRowPx={HOUR_ROW_PX} />
           )}
         </div>
       </div>
@@ -224,16 +229,16 @@ export function DayView({ currentDate, events, onTimeSlotClick, onEventClick, on
   );
 }
 
-function CurrentTimeIndicator() {
+function CurrentTimeIndicator({ hourRowPx }: { hourRowPx: number }) {
   const now = new Date();
   const hours = now.getHours();
   const minutes = now.getMinutes();
-  const topPercent = (hours + minutes / 60) * (100 / 24);
+  const topPx = ((hours * 60 + minutes) / 60) * hourRowPx;
 
   return (
     <div
       className="absolute left-0 right-0 flex items-center pointer-events-none z-20"
-      style={{ top: `${topPercent}%` }}
+      style={{ top: `${topPx}px` }}
     >
       <div className="w-3 h-3 rounded-full bg-destructive -ml-1.5" />
       <div className="flex-1 h-0.5 bg-destructive" />
