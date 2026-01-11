@@ -20,6 +20,7 @@ interface EventModalProps {
   onSave: (event: Omit<CalendarEvent, 'id'>) => void;
   onDelete?: (id: string) => void;
   selectedDate: Date;
+  defaultStartTime?: string;
   editingEvent?: CalendarEvent | null;
 }
 
@@ -42,11 +43,15 @@ export function EventModal({
   onSave,
   onDelete,
   selectedDate,
+  defaultStartTime = '09:00',
   editingEvent,
 }: EventModalProps) {
   const [title, setTitle] = useState('');
-  const [startTime, setStartTime] = useState('09:00');
-  const [endTime, setEndTime] = useState('10:00');
+  const [startTime, setStartTime] = useState(defaultStartTime);
+  const [endTime, setEndTime] = useState(() => {
+    const [hours] = defaultStartTime.split(':').map(Number);
+    return `${(hours + 1).toString().padStart(2, '0')}:00`;
+  });
   const [description, setDescription] = useState('');
   const [color, setColor] = useState<EventColor>('blueberry');
 
@@ -59,12 +64,13 @@ export function EventModal({
       setColor(editingEvent.color);
     } else {
       setTitle('');
-      setStartTime('09:00');
-      setEndTime('10:00');
+      setStartTime(defaultStartTime);
+      const [hours] = defaultStartTime.split(':').map(Number);
+      setEndTime(`${(hours + 1).toString().padStart(2, '0')}:00`);
       setDescription('');
       setColor('blueberry');
     }
-  }, [editingEvent, isOpen]);
+  }, [editingEvent, isOpen, defaultStartTime]);
 
   const handleSave = () => {
     if (!title.trim()) return;

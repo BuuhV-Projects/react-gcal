@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays } from 'date-fns';
+import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, setHours } from 'date-fns';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
+import { WeekView } from './WeekView';
 import { Sidebar } from './Sidebar';
 import { EventModal } from './EventModal';
 import { CalendarEvent, CalendarView } from './types';
@@ -34,6 +35,22 @@ const initialEvents: CalendarEvent[] = [
     color: 'tangerine',
     description: 'Apresentação final do projeto para stakeholders',
   },
+  {
+    id: '4',
+    title: 'Call com investidores',
+    date: new Date(Date.now() + 86400000),
+    startTime: '10:00',
+    endTime: '11:30',
+    color: 'grape',
+  },
+  {
+    id: '5',
+    title: 'Code review',
+    date: new Date(),
+    startTime: '16:00',
+    endTime: '17:00',
+    color: 'peacock',
+  },
 ];
 
 export function Calendar() {
@@ -42,6 +59,7 @@ export function Calendar() {
   const [events, setEvents] = useState<CalendarEvent[]>(initialEvents);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState<string>('09:00');
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
 
   const handlePrevious = () => {
@@ -70,18 +88,28 @@ export function Calendar() {
 
   const handleDayClick = (date: Date) => {
     setSelectedDate(date);
+    setSelectedTime('09:00');
+    setEditingEvent(null);
+    setIsModalOpen(true);
+  };
+
+  const handleTimeSlotClick = (date: Date, hour: number) => {
+    setSelectedDate(date);
+    setSelectedTime(`${hour.toString().padStart(2, '0')}:00`);
     setEditingEvent(null);
     setIsModalOpen(true);
   };
 
   const handleEventClick = (event: CalendarEvent) => {
     setSelectedDate(new Date(event.date));
+    setSelectedTime(event.startTime);
     setEditingEvent(event);
     setIsModalOpen(true);
   };
 
   const handleAddEvent = () => {
     setSelectedDate(new Date());
+    setSelectedTime('09:00');
     setEditingEvent(null);
     setIsModalOpen(true);
   };
@@ -126,12 +154,30 @@ export function Calendar() {
         <Sidebar currentDate={currentDate} onDateSelect={handleDateSelect} />
         
         <main className="flex-1 flex flex-col overflow-hidden">
-          <CalendarGrid
-            currentDate={currentDate}
-            events={events}
-            onDayClick={handleDayClick}
-            onEventClick={handleEventClick}
-          />
+          {view === 'month' && (
+            <CalendarGrid
+              currentDate={currentDate}
+              events={events}
+              onDayClick={handleDayClick}
+              onEventClick={handleEventClick}
+            />
+          )}
+          {view === 'week' && (
+            <WeekView
+              currentDate={currentDate}
+              events={events}
+              onTimeSlotClick={handleTimeSlotClick}
+              onEventClick={handleEventClick}
+            />
+          )}
+          {view === 'day' && (
+            <WeekView
+              currentDate={currentDate}
+              events={events}
+              onTimeSlotClick={handleTimeSlotClick}
+              onEventClick={handleEventClick}
+            />
+          )}
         </main>
       </div>
 
@@ -141,6 +187,7 @@ export function Calendar() {
         onSave={handleSaveEvent}
         onDelete={handleDeleteEvent}
         selectedDate={selectedDate}
+        defaultStartTime={selectedTime}
         editingEvent={editingEvent}
       />
     </div>
