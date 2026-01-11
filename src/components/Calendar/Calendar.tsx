@@ -3,6 +3,7 @@ import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, setHours } 
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { WeekView } from './WeekView';
+import { DayView } from './DayView';
 import { Sidebar } from './Sidebar';
 import { EventModal } from './EventModal';
 import { CalendarEvent, CalendarView } from './types';
@@ -171,7 +172,7 @@ export function Calendar() {
             />
           )}
           {view === 'day' && (
-            <WeekView
+            <DayView
               currentDate={currentDate}
               events={events}
               onTimeSlotClick={handleTimeSlotClick}
