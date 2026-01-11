@@ -1,10 +1,13 @@
 {
   "files": [],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  "references": [
+    { "path": "./packages/your-daily-planner" }
+  ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "react-gcal": ["./packages/your-daily-planner/src"]
     },
     "noImplicitAny": false,
     "noUnusedParameters": false,

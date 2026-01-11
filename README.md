@@ -1,73 +1,73 @@
-# Welcome to your Lovable project
+# React GCal - Monorepo
 
-## Project info
+This is a monorepo containing the React GCal (Google Calendar-inspired) component library and an example application.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Structure
 
-## How can I edit this code?
+```
+.
+├── packages/
+│   └── your-daily-planner/    # The main library package (react-gcal)
+└── src/                        # Lovable app source code (uses the library)
+```
 
-There are several ways of editing your application.
+## Getting Started
 
-**Use Lovable**
+### Install Dependencies
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+From the root directory:
 
-Changes made via Lovable will be committed automatically to this repo.
+```bash
+npm install
+```
 
-**Use your preferred IDE**
+### Build the Library
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+npm run build:lib
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Run the Lovable App
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+This will start the Lovable application at `http://localhost:8080` (or the port configured in Vite).
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Build Everything
 
-**Use GitHub Codespaces**
+```bash
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Packages
 
-## What technologies are used for this project?
+### `react-gcal` (packages/your-daily-planner)
 
-This project is built with:
+The main calendar component library. See [packages/your-daily-planner/README.md](packages/your-daily-planner/README.md) for more details.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+The library is used in the Lovable app located in `src/`. The app imports the library using the alias `react-gcal` configured in `vite.config.ts`.
 
-## How can I deploy this project?
+## Development
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+The project uses npm workspaces for managing the library package. The Lovable app in `src/` imports the library locally using Vite aliases, allowing you to develop both simultaneously.
 
-## Can I connect a custom domain to my Lovable project?
+To use the library in your Lovable app, import it like this:
 
-Yes, you can!
+```tsx
+import { Calendar, CalendarEvent } from 'react-gcal';
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+The alias is configured in `vite.config.ts` to point to the local library source.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## Publishing
+
+To publish the library to npm:
+
+```bash
+cd packages/your-daily-planner
+npm publish
+```
+
+Make sure to update the version in `packages/your-daily-planner/package.json` before publishing. The package will be published as `react-gcal` on npm.
