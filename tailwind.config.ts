@@ -13,6 +13,10 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['Roboto', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        display: ['Google Sans', 'Roboto', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -57,6 +61,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        event: {
+          tomato: "hsl(var(--event-tomato))",
+          tangerine: "hsl(var(--event-tangerine))",
+          banana: "hsl(var(--event-banana))",
+          basil: "hsl(var(--event-basil))",
+          sage: "hsl(var(--event-sage))",
+          peacock: "hsl(var(--event-peacock))",
+          blueberry: "hsl(var(--event-blueberry))",
+          lavender: "hsl(var(--event-lavender))",
+          grape: "hsl(var(--event-grape))",
+          graphite: "hsl(var(--event-graphite))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -80,10 +96,21 @@ export default {
             height: "0",
           },
         },
+        "fade-in": {
+          from: {
+            opacity: "0",
+            transform: "translateY(-4px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "fade-in": "fade-in 0.2s ease-out",
       },
     },
   },
