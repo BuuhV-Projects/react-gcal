@@ -2,25 +2,21 @@ import {
   startOfWeek, 
   endOfWeek, 
   eachDayOfInterval,
-  eachHourOfInterval,
   format,
   isSameDay,
   isToday,
-  setHours,
-  startOfDay,
-  endOfDay,
-  parseISO,
-  differenceInMinutes,
 } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarEvent } from './types';
 import { cn } from '@/lib/utils';
+import { useState, DragEvent } from 'react';
 
 interface WeekViewProps {
   currentDate: Date;
   events: CalendarEvent[];
   onTimeSlotClick: (date: Date, hour: number) => void;
   onEventClick: (event: CalendarEvent) => void;
+  onEventDrop: (eventId: string, newDate: Date, newHour?: number) => void;
 }
 
 const eventColorClasses: Record<string, string> = {
@@ -36,7 +32,9 @@ const eventColorClasses: Record<string, string> = {
   graphite: 'bg-event-graphite text-white border-l-4 border-gray-700',
 };
 
-export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick }: WeekViewProps) {
+export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick, onEventDrop }: WeekViewProps) {
+  const [dragOverSlot, setDragOverSlot] = useState<{ day: Date; hour: number } | null>(null);
+  
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
   const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 });
   const days = eachDayOfInterval({ start: weekStart, end: weekEnd });
@@ -61,6 +59,30 @@ export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick }:
     const heightPercent = Math.max(durationHours * (100 / 24), 2);
     
     return { top: `${topPercent}%`, height: `${heightPercent}%` };
+  };
+
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, event: CalendarEvent) => {
+    e.dataTransfer.setData('eventId', event.id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>, day: Date, hour: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverSlot({ day, hour });
+  };
+
+  const handleDragLeave = () => {
+    setDragOverSlot(null);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>, day: Date, hour: number) => {
+    e.preventDefault();
+    const eventId = e.dataTransfer.getData('eventId');
+    if (eventId) {
+      onEventDrop(eventId, day, hour);
+    }
+    setDragOverSlot(null);
   };
 
   return (
@@ -119,13 +141,25 @@ export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick }:
                 className="flex-1 relative border-r border-border last:border-r-0"
               >
                 {/* Hour slots */}
-                {hours.map((hour) => (
-                  <div
-                    key={hour}
-                    onClick={() => onTimeSlotClick(day, hour)}
-                    className="h-14 border-b border-border hover:bg-accent/30 cursor-pointer transition-colors"
-                  />
-                ))}
+                {hours.map((hour) => {
+                  const isDragOver = dragOverSlot && 
+                    isSameDay(dragOverSlot.day, day) && 
+                    dragOverSlot.hour === hour;
+                  
+                  return (
+                    <div
+                      key={hour}
+                      onClick={() => onTimeSlotClick(day, hour)}
+                      onDragOver={(e) => handleDragOver(e, day, hour)}
+                      onDragLeave={handleDragLeave}
+                      onDrop={(e) => handleDrop(e, day, hour)}
+                      className={cn(
+                        "h-14 border-b border-border hover:bg-accent/30 cursor-pointer transition-colors",
+                        isDragOver && "bg-primary/20"
+                      )}
+                    />
+                  );
+                })}
 
                 {/* Events overlay */}
                 <div className="absolute inset-0 pointer-events-none">
@@ -134,12 +168,14 @@ export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick }:
                     return (
                       <div
                         key={event.id}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, event)}
                         onClick={(e) => {
                           e.stopPropagation();
                           onEventClick(event);
                         }}
                         className={cn(
-                          "absolute left-1 right-1 rounded-md px-2 py-1 cursor-pointer pointer-events-auto overflow-hidden transition-opacity hover:opacity-90",
+                          "absolute left-1 right-1 rounded-md px-2 py-1 cursor-grab active:cursor-grabbing pointer-events-auto overflow-hidden transition-opacity hover:opacity-90",
                           eventColorClasses[event.color]
                         )}
                         style={{

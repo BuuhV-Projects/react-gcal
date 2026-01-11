@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays } from 'date-fns';
+import { useState, useMemo, useCallback } from 'react';
+import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, setHours, setMinutes } from 'date-fns';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { WeekView } from './WeekView';
@@ -158,6 +158,31 @@ export function Calendar() {
     setCurrentDate(date);
   };
 
+  const handleEventDrop = useCallback((eventId: string, newDate: Date, newHour?: number) => {
+    setEvents(prevEvents => prevEvents.map(event => {
+      if (event.id !== eventId) return event;
+      
+      // Parse existing times
+      const [startH, startM] = event.startTime.split(':').map(Number);
+      const [endH, endM] = event.endTime.split(':').map(Number);
+      const duration = (endH * 60 + endM) - (startH * 60 + startM);
+      
+      // Calculate new times
+      const newStartHour = newHour !== undefined ? newHour : startH;
+      const newStartMinute = newHour !== undefined ? 0 : startM;
+      const newEndMinutes = newStartHour * 60 + newStartMinute + duration;
+      const newEndHour = Math.floor(newEndMinutes / 60);
+      const newEndMinute = newEndMinutes % 60;
+      
+      return {
+        ...event,
+        date: newDate,
+        startTime: `${newStartHour.toString().padStart(2, '0')}:${newStartMinute.toString().padStart(2, '0')}`,
+        endTime: `${Math.min(newEndHour, 23).toString().padStart(2, '0')}:${Math.min(newEndMinute, 59).toString().padStart(2, '0')}`,
+      };
+    }));
+  }, []);
+
   return (
     <div className="h-screen flex flex-col bg-background">
       <CalendarHeader
@@ -187,6 +212,7 @@ export function Calendar() {
               events={filteredEvents}
               onDayClick={handleDayClick}
               onEventClick={handleEventClick}
+              onEventDrop={handleEventDrop}
             />
           )}
           {view === 'week' && (
@@ -195,6 +221,7 @@ export function Calendar() {
               events={filteredEvents}
               onTimeSlotClick={handleTimeSlotClick}
               onEventClick={handleEventClick}
+              onEventDrop={handleEventDrop}
             />
           )}
           {view === 'day' && (
@@ -203,6 +230,7 @@ export function Calendar() {
               events={filteredEvents}
               onTimeSlotClick={handleTimeSlotClick}
               onEventClick={handleEventClick}
+              onEventDrop={handleEventDrop}
             />
           )}
         </main>

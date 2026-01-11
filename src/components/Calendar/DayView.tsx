@@ -6,13 +6,15 @@ import {
 import { ptBR } from 'date-fns/locale';
 import { CalendarEvent } from './types';
 import { cn } from '@/lib/utils';
-import { Clock, FileText, MapPin } from 'lucide-react';
+import { Clock, FileText } from 'lucide-react';
+import { useState, DragEvent } from 'react';
 
 interface DayViewProps {
   currentDate: Date;
   events: CalendarEvent[];
   onTimeSlotClick: (date: Date, hour: number) => void;
   onEventClick: (event: CalendarEvent) => void;
+  onEventDrop: (eventId: string, newDate: Date, newHour?: number) => void;
 }
 
 const eventColorClasses: Record<string, { bg: string; border: string; light: string }> = {
@@ -28,7 +30,9 @@ const eventColorClasses: Record<string, { bg: string; border: string; light: str
   graphite: { bg: 'bg-event-graphite', border: 'border-gray-700', light: 'bg-gray-50' },
 };
 
-export function DayView({ currentDate, events, onTimeSlotClick, onEventClick }: DayViewProps) {
+export function DayView({ currentDate, events, onTimeSlotClick, onEventClick, onEventDrop }: DayViewProps) {
+  const [dragOverHour, setDragOverHour] = useState<number | null>(null);
+  
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const isCurrentDay = isToday(currentDate);
 
@@ -60,6 +64,30 @@ export function DayView({ currentDate, events, onTimeSlotClick, onEventClick }: 
     if (hours === 0) return `${minutes}min`;
     if (minutes === 0) return `${hours}h`;
     return `${hours}h ${minutes}min`;
+  };
+
+  const handleDragStart = (e: DragEvent<HTMLDivElement>, event: CalendarEvent) => {
+    e.dataTransfer.setData('eventId', event.id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>, hour: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverHour(hour);
+  };
+
+  const handleDragLeave = () => {
+    setDragOverHour(null);
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>, hour: number) => {
+    e.preventDefault();
+    const eventId = e.dataTransfer.getData('eventId');
+    if (eventId) {
+      onEventDrop(eventId, currentDate, hour);
+    }
+    setDragOverHour(null);
   };
 
   return (
@@ -114,13 +142,23 @@ export function DayView({ currentDate, events, onTimeSlotClick, onEventClick }: 
         {/* Day column with events */}
         <div className="flex-1 relative">
           {/* Hour slots */}
-          {hours.map((hour) => (
-            <div
-              key={hour}
-              onClick={() => onTimeSlotClick(currentDate, hour)}
-              className="h-16 border-b border-border hover:bg-accent/30 cursor-pointer transition-colors"
-            />
-          ))}
+          {hours.map((hour) => {
+            const isDragOver = dragOverHour === hour;
+            
+            return (
+              <div
+                key={hour}
+                onClick={() => onTimeSlotClick(currentDate, hour)}
+                onDragOver={(e) => handleDragOver(e, hour)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, hour)}
+                className={cn(
+                  "h-16 border-b border-border hover:bg-accent/30 cursor-pointer transition-colors",
+                  isDragOver && "bg-primary/20"
+                )}
+              />
+            );
+          })}
 
           {/* Events overlay */}
           <div className="absolute inset-0 pointer-events-none px-2">
@@ -131,12 +169,14 @@ export function DayView({ currentDate, events, onTimeSlotClick, onEventClick }: 
               return (
                 <div
                   key={event.id}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, event)}
                   onClick={(e) => {
                     e.stopPropagation();
                     onEventClick(event);
                   }}
                   className={cn(
-                    "absolute left-2 right-4 rounded-lg cursor-pointer pointer-events-auto overflow-hidden transition-all hover:shadow-lg border-l-4",
+                    "absolute left-2 right-4 rounded-lg cursor-grab active:cursor-grabbing pointer-events-auto overflow-hidden transition-all hover:shadow-lg border-l-4",
                     colors.light,
                     colors.border
                   )}
