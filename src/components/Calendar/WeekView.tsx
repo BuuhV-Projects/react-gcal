@@ -121,7 +121,7 @@ export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick, o
           {hours.map((hour) => (
             <div
               key={hour}
-              className="h-14 border-b border-border flex items-start justify-end pr-2 -mt-2"
+              className="h-14 border-b border-border flex items-center justify-end pr-2"
             >
               <span className="text-xs text-muted-foreground">
                 {hour.toString().padStart(2, '0')}:00
