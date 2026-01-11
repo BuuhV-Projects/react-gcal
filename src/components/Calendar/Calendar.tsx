@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, setHours } from 'date-fns';
+import { useState, useMemo } from 'react';
+import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays } from 'date-fns';
 import { CalendarHeader } from './CalendarHeader';
 import { CalendarGrid } from './CalendarGrid';
 import { WeekView } from './WeekView';
 import { DayView } from './DayView';
 import { Sidebar } from './Sidebar';
 import { EventModal } from './EventModal';
-import { CalendarEvent, CalendarView } from './types';
+import { CalendarEvent, CalendarView, EventColor } from './types';
 
 // Sample events for demonstration
 const initialEvents: CalendarEvent[] = [
@@ -54,6 +54,11 @@ const initialEvents: CalendarEvent[] = [
   },
 ];
 
+const allColors: EventColor[] = [
+  'tomato', 'tangerine', 'banana', 'basil', 'sage',
+  'peacock', 'blueberry', 'lavender', 'grape', 'graphite'
+];
+
 export function Calendar() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<CalendarView>('month');
@@ -62,7 +67,21 @@ export function Calendar() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState<string>('09:00');
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilters, setActiveFilters] = useState<EventColor[]>(allColors);
 
+  // Filter events based on search query and color filters
+  const filteredEvents = useMemo(() => {
+    return events.filter(event => {
+      const matchesSearch = searchQuery === '' || 
+        event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesFilter = activeFilters.length === 0 || activeFilters.includes(event.color);
+      
+      return matchesSearch && matchesFilter;
+    });
+  }, [events, searchQuery, activeFilters]);
   const handlePrevious = () => {
     if (view === 'month') {
       setCurrentDate(subMonths(currentDate, 1));
@@ -152,13 +171,20 @@ export function Calendar() {
       />
       
       <div className="flex-1 flex overflow-hidden">
-        <Sidebar currentDate={currentDate} onDateSelect={handleDateSelect} />
+        <Sidebar 
+          currentDate={currentDate} 
+          onDateSelect={handleDateSelect}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          activeFilters={activeFilters}
+          onFilterChange={setActiveFilters}
+        />
         
         <main className="flex-1 flex flex-col overflow-hidden">
           {view === 'month' && (
             <CalendarGrid
               currentDate={currentDate}
-              events={events}
+              events={filteredEvents}
               onDayClick={handleDayClick}
               onEventClick={handleEventClick}
             />
@@ -166,7 +192,7 @@ export function Calendar() {
           {view === 'week' && (
             <WeekView
               currentDate={currentDate}
-              events={events}
+              events={filteredEvents}
               onTimeSlotClick={handleTimeSlotClick}
               onEventClick={handleEventClick}
             />
@@ -174,7 +200,7 @@ export function Calendar() {
           {view === 'day' && (
             <DayView
               currentDate={currentDate}
-              events={events}
+              events={filteredEvents}
               onTimeSlotClick={handleTimeSlotClick}
               onEventClick={handleEventClick}
             />
