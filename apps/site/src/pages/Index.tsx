@@ -57,6 +57,12 @@ const Index = () => {
           
           <div className="hidden md:flex items-center gap-4">
             <a 
+              href="/demo"
+              className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Live Demo
+            </a>
+            <a 
               href="https://github.com" 
               target="_blank" 
               rel="noopener noreferrer"
@@ -160,14 +166,6 @@ function GettingStarted({ onNavigate }: { onNavigate: (section: Section) => void
         </p>
       </div>
 
-      {/* Preview Image */}
-      <div className="rounded-xl overflow-hidden border border-border shadow-lg">
-        <img 
-          src="/calendar-preview.png" 
-          alt="react-gcal Calendar Preview" 
-          className="w-full h-auto"
-        />
-      </div>
 
       {/* Features Grid */}
       <div className="grid sm:grid-cols-2 gap-4">
