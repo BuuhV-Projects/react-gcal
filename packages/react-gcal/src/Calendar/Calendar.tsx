@@ -7,7 +7,7 @@ import { Sidebar } from './Sidebar';
 import { CalendarEvent, CalendarView } from './types';
 import { useCalendarService } from './useCalendarService';
 import type { CalendarServiceDependencies } from './CalendarService';
-import styles from './Calendar.module.scss';
+import styles from './Calendar.module.css';
 import { cn } from '../lib/utils';
 
 export interface CalendarProps {

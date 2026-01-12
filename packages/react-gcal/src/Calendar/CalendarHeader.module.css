@@ -1,0 +1,42 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+}
+
+.leftSection {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+}
+
+.navigationButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.viewSwitcher {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: hsl(var(--muted));
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  text-transform: capitalize;
+}
