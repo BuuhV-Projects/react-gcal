@@ -79,6 +79,7 @@ export function Sidebar({
         onSelect={(date) => date && onDateSelect(date)}
         month={miniCalendarMonth}
         onMonthChange={setMiniCalendarMonth}
+        locale={labels.locale}
         className="rounded-lg border-0 p-0"
         classNames={{
           months: "w-full",
