@@ -3,6 +3,8 @@ import { Button } from '../ui/button';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarView } from './types';
+import styles from './CalendarHeader.module.scss';
+import { cn } from '../lib/utils';
 
 interface CalendarHeaderProps {
   currentDate: Date;
@@ -34,14 +36,14 @@ export function CalendarHeader({
   };
 
   return (
-    <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-card">
-      <div className="flex items-center gap-4">
+    <header className={styles.header}>
+      <div className={styles.leftSection}>
         <Button variant="create" size="lg" onClick={onAddEvent} className="gap-2">
           <Plus className="h-5 w-5" />
           Criar
         </Button>
         
-        <div className="flex items-center gap-1">
+        <div className={styles.navigationButtons}>
           <Button variant="ghost" size="icon" onClick={onPrevious}>
             <ChevronLeft className="h-5 w-5" />
           </Button>
@@ -54,12 +56,12 @@ export function CalendarHeader({
           Hoje
         </Button>
         
-        <h1 className="text-xl font-medium text-foreground capitalize">
+        <h1 className={styles.title}>
           {getTitle()}
         </h1>
       </div>
 
-      <div className="flex items-center bg-muted rounded-lg p-1">
+      <div className={styles.viewSwitcher}>
         {(['month', 'week', 'day'] as CalendarView[]).map((v) => (
           <Button
             key={v}

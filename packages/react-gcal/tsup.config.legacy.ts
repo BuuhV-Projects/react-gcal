@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsup';
+import { sassPlugin } from 'esbuild-sass-plugin';
 
 export default defineConfig({
   entry: {
@@ -26,6 +27,13 @@ export default defineConfig({
 
   treeshake: false,
   minify: false,
+
+  esbuildPlugins: [
+    sassPlugin({
+      type: 'css',
+      cssImports: true,
+    }),
+  ],
 
   esbuildOptions(options) {
     options.platform = 'node';

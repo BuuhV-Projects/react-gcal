@@ -1,0 +1,33 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.header {
+  @include flex(row, space-between, center);
+  padding: 1rem 1.5rem;
+  @include border(bottom, 1px, solid, hsl(var(--border)));
+  background-color: hsl(var(--card));
+}
+
+.leftSection {
+  @include flex(row, flex-start, center);
+  gap: 1rem;
+}
+
+.navigationButtons {
+  @include flex(row, flex-start, center);
+  gap: 0.25rem;
+}
+
+.viewSwitcher {
+  @include flex(row, flex-start, center);
+  background-color: hsl(var(--muted));
+  @include rounded(0.5rem);
+  padding: 0.25rem;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  text-transform: capitalize;
+}

@@ -19,8 +19,8 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsup && cp src/styles.css dist/styles.css",
-    "build:legacy": "tsup --config tsup.config.legacy.ts && cp src/styles.css dist/styles.css",
+    "build": "tsup && sass src/styles/styles.scss dist/styles.css --no-source-map",
+    "build:legacy": "tsup --config tsup.config.legacy.ts && sass src/styles/styles.scss dist/styles.css --no-source-map",
     "dev": "tsup --watch",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
@@ -66,7 +66,9 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "autoprefixer": "^10.4.21",
+    "esbuild-sass-plugin": "^3.6.0",
     "postcss": "^8.5.6",
+    "sass": "^1.97.2",
     "standard-version": "^9.5.0",
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",

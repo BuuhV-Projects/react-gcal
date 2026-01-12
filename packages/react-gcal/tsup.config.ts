@@ -1,4 +1,5 @@
 import { defineConfig } from 'tsup';
+import { sassPlugin } from 'esbuild-sass-plugin';
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -13,6 +14,12 @@ export default defineConfig({
   treeshake: true,
   minify: false,
   outDir: 'dist',
+  esbuildPlugins: [
+    sassPlugin({
+      type: 'css',
+      cssImports: true,
+    }),
+  ],
   esbuildOptions(options) {
     options.banner = {
       js: '"use client";',

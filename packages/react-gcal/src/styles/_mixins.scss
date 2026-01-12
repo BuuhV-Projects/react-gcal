@@ -1,0 +1,58 @@
+// SCSS Mixins for common patterns
+
+@mixin flex($direction: row, $justify: flex-start, $align: flex-start, $wrap: nowrap) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+  flex-wrap: $wrap;
+}
+
+@mixin grid($cols: 1, $rows: auto, $gap: 0) {
+  display: grid;
+  grid-template-columns: repeat($cols, 1fr);
+  grid-template-rows: $rows;
+  gap: $gap;
+}
+
+@mixin border($side: null, $width: 1px, $style: solid, $color: hsl(var(--border))) {
+  @if $side {
+    border-#{$side}: $width $style $color;
+  } @else {
+    border: $width $style $color;
+  }
+}
+
+@mixin rounded($radius: var(--radius)) {
+  border-radius: $radius;
+}
+
+@mixin transition($properties: all, $duration: 150ms, $timing: ease-in-out) {
+  transition: $properties $duration $timing;
+}
+
+@mixin hover($property: background-color, $value: hsl(var(--accent))) {
+  &:hover {
+    #{$property}: $value;
+  }
+}
+
+@mixin focus-visible {
+  &:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+@mixin text-ellipsis($lines: 1) {
+  @if $lines == 1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

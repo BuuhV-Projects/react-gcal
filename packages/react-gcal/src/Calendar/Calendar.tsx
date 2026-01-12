@@ -7,6 +7,8 @@ import { Sidebar } from './Sidebar';
 import { CalendarEvent, CalendarView } from './types';
 import { useCalendarService } from './useCalendarService';
 import type { CalendarServiceDependencies } from './CalendarService';
+import styles from './Calendar.module.scss';
+import { cn } from '../lib/utils';
 
 export interface CalendarProps {
   events?: CalendarEvent[];
@@ -49,7 +51,7 @@ export function Calendar({
   const service = useCalendarService(dependencies);
 
   return (
-    <div className={`h-screen flex flex-col bg-background ${className || ''}`}>
+    <div className={cn(styles.calendar, className)}>
       <CalendarHeader
         currentDate={service.currentDate}
         view={service.view}
@@ -60,7 +62,7 @@ export function Calendar({
         onAddEvent={service.handleAddEvent}
       />
       
-      <div className="flex-1 flex overflow-hidden">
+      <div className={styles.content}>
         <Sidebar 
           currentDate={service.currentDate} 
           onDateSelect={service.handleDateSelect}
@@ -70,7 +72,7 @@ export function Calendar({
           onFilterChange={service.setActiveFilters}
         />
         
-        <main className="flex-1 flex flex-col overflow-hidden">
+        <main className={styles.main}>
           {service.view === 'month' && (
             <CalendarGrid
               currentDate={service.currentDate}

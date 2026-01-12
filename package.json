@@ -8,11 +8,12 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "npm run dev --workspace=site",
+    "dev:site": "npm run dev --workspace=site",
+    "dev": "vite",
+    "dev:lib": "npm run dev --workspace=react-gcal",
     "build": "npm run build --workspace=site",
     "build:dev": "npm run build:dev --workspace=site",
     "build:lib": "npm run build --workspace=react-gcal",
-    "dev:lib": "npm run dev --workspace=react-gcal",
     "preview": "npm run preview --workspace=site",
     "lint": "eslint .",
     "type-check": "tsc --noEmit"
