@@ -7,7 +7,7 @@ export default {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    "./packages/your-daily-planner/src/**/*.{ts,tsx}"
+    "./packages/react-gcal/src/**/*.{ts,tsx}"
   ],
   prefix: "",
   theme: {

@@ -23,7 +23,7 @@
 
     "paths": {
       "@/*": ["./src/*"],
-      "react-gcal": ["../../packages/your-daily-planner/src"]
+      "react-gcal": ["../../packages/react-gcal/src"]
     }
   },
   "include": ["src"]

@@ -1,14 +1,14 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/your-daily-planner" },
+    { "path": "./packages/react-gcal" },
     { "path": "./apps/site" }
   ],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "react-gcal": ["./packages/your-daily-planner/src"]
+      "react-gcal": ["./packages/react-gcal/src"]
     },
     "noImplicitAny": false,
     "noUnusedParameters": false,

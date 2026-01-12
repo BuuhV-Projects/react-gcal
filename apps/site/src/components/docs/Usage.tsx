@@ -17,8 +17,8 @@ export function Usage() {
         </p>
         
         <CodeBlock language="tsx">
-{`import { Calendar } from 'your-daily-planner';
-import 'your-daily-planner/styles';
+{`import { Calendar } from 'react-gcal';
+import 'react-gcal/styles';
 
 function App() {
   return <Calendar />;
@@ -34,8 +34,8 @@ function App() {
         
         <CodeBlock language="tsx">
 {`import { useState } from 'react';
-import { Calendar, CalendarEvent } from 'your-daily-planner';
-import 'your-daily-planner/styles';
+import { Calendar, CalendarEvent } from 'react-gcal';
+import 'react-gcal/styles';
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([
@@ -70,7 +70,7 @@ function App() {
         </p>
         
         <CodeBlock language="tsx">
-{`import { Calendar, CalendarEvent } from 'your-daily-planner';
+{`import { Calendar, CalendarEvent } from 'react-gcal';
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
@@ -117,7 +117,7 @@ function App() {
         </p>
         
         <CodeBlock language="tsx">
-{`import { Calendar } from 'your-daily-planner';
+{`import { Calendar } from 'react-gcal';
 
 function App() {
   return (
@@ -146,7 +146,7 @@ function App() {
         </p>
         
         <CodeBlock language="tsx">
-{`import { Calendar, CalendarEvent } from 'your-daily-planner';
+{`import { Calendar, CalendarEvent } from 'react-gcal';
 
 function App() {
   const [events, setEvents] = useState<CalendarEvent[]>([...]);
@@ -180,7 +180,7 @@ function App() {
         </p>
         
         <CodeBlock language="tsx">
-{`import { Calendar } from 'your-daily-planner';
+{`import { Calendar } from 'react-gcal';
 
 function App() {
   return (

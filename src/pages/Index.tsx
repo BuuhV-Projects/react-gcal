@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, CalendarEvent } from '../../packages/your-daily-planner/src';
+import { Calendar, CalendarEvent } from '../../packages/react-gcal/src';
 
 // Sample events for demonstration
 const initialEvents: CalendarEvent[] = [

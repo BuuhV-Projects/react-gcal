@@ -18,19 +18,19 @@ export function Installation() {
         
         <div className="space-y-3">
           <CodeBlock language="bash" title="npm">
-            npm install your-daily-planner
+            npm install react-gcal
           </CodeBlock>
           
           <CodeBlock language="bash" title="yarn">
-            yarn add your-daily-planner
+            yarn add react-gcal
           </CodeBlock>
           
           <CodeBlock language="bash" title="pnpm">
-            pnpm add your-daily-planner
+            pnpm add react-gcal
           </CodeBlock>
           
           <CodeBlock language="bash" title="bun">
-            bun add your-daily-planner
+            bun add react-gcal
           </CodeBlock>
         </div>
       </section>
@@ -54,7 +54,7 @@ export function Installation() {
         </p>
         
         <CodeBlock language="tsx" title="main.tsx or App.tsx">
-{`import 'your-daily-planner/styles';`}
+{`import 'react-gcal/styles';`}
         </CodeBlock>
 
         <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
@@ -80,8 +80,8 @@ export function Installation() {
         <CodeBlock language="tsx" title="app/calendar/page.tsx">
 {`'use client';
 
-import { Calendar } from 'your-daily-planner';
-import 'your-daily-planner/styles';
+import { Calendar } from 'react-gcal';
+import 'react-gcal/styles';
 
 export default function CalendarPage() {
   return <Calendar />;

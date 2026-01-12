@@ -192,14 +192,14 @@ function GettingStarted({ onNavigate }: { onNavigate: (section: Section) => void
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-foreground">Quick Start</h2>
         <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-x-auto">
-          <code className="text-foreground">npm install your-daily-planner</code>
+          <code className="text-foreground">npm install react-gcal</code>
         </div>
         <p className="text-muted-foreground">
           Then import the component and styles in your application:
         </p>
         <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-x-auto">
-          <pre className="text-foreground">{`import { Calendar } from 'your-daily-planner';
-import 'your-daily-planner/styles';
+          <pre className="text-foreground">{`import { Calendar } from 'react-gcal';
+import 'react-gcal/styles';
 
 function App() {
   return <Calendar />;

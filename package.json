@@ -11,8 +11,8 @@
     "dev": "npm run dev --workspace=site",
     "build": "npm run build --workspace=site",
     "build:dev": "npm run build:dev --workspace=site",
-    "build:lib": "npm run build --workspace=your-daily-planner",
-    "dev:lib": "npm run dev --workspace=your-daily-planner",
+    "build:lib": "npm run build --workspace=react-gcal",
+    "dev:lib": "npm run dev --workspace=react-gcal",
     "preview": "npm run preview --workspace=site",
     "lint": "eslint .",
     "type-check": "tsc --noEmit"

@@ -7,7 +7,7 @@ This is a monorepo containing the React GCal (Google Calendar-inspired) componen
 ```
 .
 ├── packages/
-│   └── your-daily-planner/    # The main library package (react-gcal)
+│   └── react-gcal/    # The main library package (react-gcal)
 └── apps/
     └── site/                   # Lovable app source code (uses the library)
 ```
@@ -44,9 +44,9 @@ npm run build
 
 ## Packages
 
-### `react-gcal` (packages/your-daily-planner)
+### `react-gcal` (packages/react-gcal)
 
-The main calendar component library. See [packages/your-daily-planner/README.md](packages/your-daily-planner/README.md) for more details.
+The main calendar component library. See [packages/react-gcal/README.md](packages/react-gcal/README.md) for more details.
 
 ### `site` (apps/site)
 
@@ -69,8 +69,8 @@ The alias is configured in `apps/site/vite.config.ts` to point to the local libr
 To publish the library to npm:
 
 ```bash
-cd packages/your-daily-planner
+cd packages/react-gcal
 npm publish
 ```
 
-Make sure to update the version in `packages/your-daily-planner/package.json` before publishing. The package will be published as `react-gcal` on npm.
+Make sure to update the version in `packages/react-gcal/package.json` before publishing. The package will be published as `react-gcal` on npm.

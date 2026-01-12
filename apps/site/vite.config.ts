@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "react-gcal": path.resolve(__dirname, "../../packages/your-daily-planner/src"),
+      "react-gcal": path.resolve(__dirname, "../../packages/react-gcal/src"),
     },
   },
 }));
