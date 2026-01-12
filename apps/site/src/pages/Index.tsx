@@ -160,14 +160,6 @@ function GettingStarted({ onNavigate }: { onNavigate: (section: Section) => void
         </p>
       </div>
 
-      {/* Preview Image */}
-      <div className="rounded-xl overflow-hidden border border-border shadow-lg">
-        <img 
-          src="/calendar-preview.png" 
-          alt="react-gcal Calendar Preview" 
-          className="w-full h-auto"
-        />
-      </div>
 
       {/* Features Grid */}
       <div className="grid sm:grid-cols-2 gap-4">
