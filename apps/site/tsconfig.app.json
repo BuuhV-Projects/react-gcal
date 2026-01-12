@@ -21,7 +21,6 @@
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
 
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "react-gcal": ["../../packages/your-daily-planner/src"]
