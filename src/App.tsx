@@ -48,42 +48,32 @@ const initialEvents: CalendarEvent[] = [
   },
 ];
 
-const Index = () => {
+const App = () => {
   const [events, setEvents] = useState<CalendarEvent[]>(initialEvents);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string>('09:00');
 
-  // View event - just show details (read-only)
   const handleEventView = (event: CalendarEvent) => {
     setSelectedEvent(event);
     setIsModalOpen(true);
-    // You can implement your own modal/dialog here
-    console.log('View event:', event);
   };
 
-  // Add event - open your custom add form
   const handleEventAdd = (date: Date, time?: string) => {
     setSelectedDate(date);
     setSelectedTime(time || '09:00');
     setSelectedEvent(null);
     setIsModalOpen(true);
-    // You can implement your own add form here
-    console.log('Add event at:', date, time);
   };
 
-  // Edit event - open your custom edit form
   const handleEventEdit = (event: CalendarEvent) => {
     setSelectedEvent(event);
     setSelectedDate(new Date(event.date));
     setSelectedTime(event.startTime);
     setIsModalOpen(true);
-    // You can implement your own edit form here
-    console.log('Edit event:', event);
   };
 
-  // Delete event
   const handleEventDelete = (eventId: string) => {
     setEvents(events.filter(e => e.id !== eventId));
   };
@@ -97,23 +87,30 @@ const Index = () => {
         onEventEdit={handleEventEdit}
         onEventDelete={handleEventDelete}
       />
-      {/* Your custom modal/form implementation here */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">
-              {selectedEvent ? 'View/Edit Event' : 'Add Event'}
+          <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">
+              {selectedEvent ? 'Detalhes do Evento' : 'Novo Evento'}
             </h2>
-            <p className="mb-4">
-              {selectedEvent 
-                ? `Event: ${selectedEvent.title}` 
-                : `Date: ${selectedDate?.toLocaleDateString()} at ${selectedTime}`}
-            </p>
+            {selectedEvent ? (
+              <div className="space-y-2 text-gray-700">
+                <p><strong>Título:</strong> {selectedEvent.title}</p>
+                <p><strong>Horário:</strong> {selectedEvent.startTime} - {selectedEvent.endTime}</p>
+                {selectedEvent.description && (
+                  <p><strong>Descrição:</strong> {selectedEvent.description}</p>
+                )}
+              </div>
+            ) : (
+              <p className="text-gray-700">
+                Data: {selectedDate?.toLocaleDateString('pt-BR')} às {selectedTime}
+              </p>
+            )}
             <button
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 bg-gray-200 rounded"
+              className="mt-6 w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Close
+              Fechar
             </button>
           </div>
         </div>
@@ -122,4 +119,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default App;

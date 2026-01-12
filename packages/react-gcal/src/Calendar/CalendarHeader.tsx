@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarView } from './types';
-import styles from './CalendarHeader.module.scss';
+import styles from './CalendarHeader.module.css';
 import { cn } from '../lib/utils';
 
 interface CalendarHeaderProps {
