@@ -44,15 +44,9 @@ const Index = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-<<<<<<< HEAD
-              <span className="text-primary-foreground font-bold text-sm">YGCAP</span>
-            </div>
-            <span className="font-semibold text-lg text-foreground">React GCal</span>
-=======
               <span className="text-primary-foreground font-bold text-sm">📅</span>
             </div>
             <span className="font-semibold text-lg text-foreground">react-gcal</span>
->>>>>>> b4347a023fead91c052a604fed3c11fe10e3c0cd
           </div>
           
           <div className="hidden md:flex items-center gap-4">
