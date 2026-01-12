@@ -15,6 +15,7 @@ export interface CalendarProps {
   initialDate?: Date;
   initialView?: CalendarView;
   className?: string;
+  customFilters?: import('./types').CustomFilter[];
   // Action callbacks - each action is optional and independent
   onEventView?: (event: CalendarEvent) => void;
   onEventAdd?: (date: Date, time?: string) => void;
@@ -29,6 +30,7 @@ export function Calendar({
   initialDate,
   initialView,
   className,
+  customFilters,
   onEventView,
   onEventAdd,
   onEventEdit,
@@ -40,12 +42,13 @@ export function Calendar({
     events,
     initialDate,
     initialView,
+    customFilters,
     onEventView,
     onEventAdd,
     onEventEdit,
     onEventDelete,
     onEventUpdate,
-  }), [events, initialDate, initialView, onEventView, onEventAdd, onEventEdit, onEventDelete, onEventUpdate]);
+  }), [events, initialDate, initialView, customFilters, onEventView, onEventAdd, onEventEdit, onEventDelete, onEventUpdate]);
 
   // Get calendar service instance
   const service = useCalendarService(dependencies);
@@ -68,8 +71,9 @@ export function Calendar({
           onDateSelect={service.handleDateSelect}
           searchQuery={service.searchQuery}
           onSearchChange={service.setSearchQuery}
-          activeFilters={service.activeFilters}
-          onFilterChange={service.setActiveFilters}
+          customFilters={service.customFilters}
+          activeFilterIds={service.activeFilterIds}
+          onFilterChange={service.setActiveFilterIds}
         />
         
         <main className={styles.main}>

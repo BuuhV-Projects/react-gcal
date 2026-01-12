@@ -36,6 +36,10 @@ import {
   AccordionContent,
 } from './ui/accordion';
 
+// Re-export types
+export type { CalendarEvent, CalendarView, EventColor, CustomFilter } from './Calendar/types';
+export type { CalendarProps } from './Calendar/Calendar';
+
 // 🔴 NÃO importar CSS aqui
 
 export {
