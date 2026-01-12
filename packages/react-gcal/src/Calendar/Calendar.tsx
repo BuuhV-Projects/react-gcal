@@ -4,7 +4,7 @@ import { CalendarGrid } from './CalendarGrid';
 import { WeekView } from './WeekView';
 import { DayView } from './DayView';
 import { Sidebar } from './Sidebar';
-import { CalendarEvent, CalendarView } from './types';
+import { CalendarEvent, CalendarView, CalendarLabels, mergeLabels } from './types';
 import { useCalendarService } from './useCalendarService';
 import type { CalendarServiceDependencies } from './CalendarService';
 import styles from './Calendar.module.css';
@@ -16,12 +16,11 @@ export interface CalendarProps {
   initialView?: CalendarView;
   className?: string;
   customFilters?: import('./types').CustomFilter[];
-  // Action callbacks - each action is optional and independent
+  labels?: Partial<CalendarLabels>;
   onEventView?: (event: CalendarEvent) => void;
   onEventAdd?: (date: Date, time?: string) => void;
   onEventEdit?: (event: CalendarEvent) => void;
   onEventDelete?: (eventId: string) => void;
-  // Legacy callbacks for backward compatibility (deprecated)
   onEventUpdate?: (event: CalendarEvent) => void;
 }
 
@@ -31,13 +30,15 @@ export function Calendar({
   initialView,
   className,
   customFilters,
+  labels: customLabels,
   onEventView,
   onEventAdd,
   onEventEdit,
   onEventDelete,
   onEventUpdate,
 }: CalendarProps) {
-  // Create service dependencies object
+  const labels = useMemo(() => mergeLabels(customLabels), [customLabels]);
+
   const dependencies = useMemo<CalendarServiceDependencies>(() => ({
     events,
     initialDate,
@@ -50,7 +51,6 @@ export function Calendar({
     onEventUpdate,
   }), [events, initialDate, initialView, customFilters, onEventView, onEventAdd, onEventEdit, onEventDelete, onEventUpdate]);
 
-  // Get calendar service instance
   const service = useCalendarService(dependencies);
 
   return (
@@ -63,6 +63,7 @@ export function Calendar({
         onToday={service.handleToday}
         onViewChange={service.setView}
         onAddEvent={service.handleAddEvent}
+        labels={labels}
       />
       
       <div className={styles.content}>
@@ -74,6 +75,7 @@ export function Calendar({
           customFilters={service.customFilters}
           activeFilterIds={service.activeFilterIds}
           onFilterChange={service.setActiveFilterIds}
+          labels={labels}
         />
         
         <main className={styles.main}>
@@ -84,6 +86,7 @@ export function Calendar({
               onDayClick={service.handleDayClick}
               onEventClick={service.handleEventClick}
               onEventDrop={service.handleEventDrop}
+              labels={labels}
             />
           )}
           {service.view === 'week' && (
@@ -93,6 +96,7 @@ export function Calendar({
               onTimeSlotClick={service.handleTimeSlotClick}
               onEventClick={service.handleEventClick}
               onEventDrop={service.handleEventDrop}
+              labels={labels}
             />
           )}
           {service.view === 'day' && (
@@ -102,6 +106,7 @@ export function Calendar({
               onTimeSlotClick={service.handleTimeSlotClick}
               onEventClick={service.handleEventClick}
               onEventDrop={service.handleEventDrop}
+              labels={labels}
             />
           )}
         </main>

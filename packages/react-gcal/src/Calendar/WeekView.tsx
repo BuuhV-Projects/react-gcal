@@ -6,8 +6,8 @@ import {
   isSameDay,
   isToday,
 } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { CalendarEvent } from './types';
+import { CalendarLabels, defaultLabels } from './labels';
 import { cn } from '../lib/utils';
 import { useState, DragEvent } from 'react';
 
@@ -17,6 +17,7 @@ interface WeekViewProps {
   onTimeSlotClick: (date: Date, hour: number) => void;
   onEventClick: (event: CalendarEvent) => void;
   onEventDrop: (eventId: string, newDate: Date, newHour?: number) => void;
+  labels?: CalendarLabels;
 }
 
 const eventColorClasses: Record<string, string> = {
@@ -32,7 +33,14 @@ const eventColorClasses: Record<string, string> = {
   graphite: 'bg-event-graphite text-white border-l-4 border-gray-700',
 };
 
-export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick, onEventDrop }: WeekViewProps) {
+export function WeekView({ 
+  currentDate, 
+  events, 
+  onTimeSlotClick, 
+  onEventClick, 
+  onEventDrop,
+  labels = defaultLabels,
+}: WeekViewProps) {
   const [dragOverSlot, setDragOverSlot] = useState<{ day: Date; hour: number } | null>(null);
   
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
@@ -95,7 +103,7 @@ export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick, o
       {/* Header with days */}
       <div className="flex border-b border-border sticky top-0 bg-background z-10">
         <div className="w-16 flex-shrink-0 border-r border-border" />
-        {days.map((day) => {
+        {days.map((day, index) => {
           const isCurrentDay = isToday(day);
           return (
             <div
@@ -103,7 +111,7 @@ export function WeekView({ currentDate, events, onTimeSlotClick, onEventClick, o
               className="flex-1 py-2 text-center border-r border-border last:border-r-0"
             >
               <div className="text-xs text-muted-foreground uppercase">
-                {format(day, 'EEE', { locale: ptBR })}
+                {labels.weekDays[index]}
               </div>
               <div
                 className={cn(

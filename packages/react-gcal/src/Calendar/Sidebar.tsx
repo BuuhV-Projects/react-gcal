@@ -4,6 +4,7 @@ import { Calendar } from '../ui/calendar';
 import { Input } from '../ui/input';
 import { Checkbox } from '../ui/checkbox';
 import { CustomFilter } from './types';
+import { CalendarLabels, defaultLabels } from './labels';
 
 interface SidebarProps {
   currentDate: Date;
@@ -13,6 +14,7 @@ interface SidebarProps {
   customFilters?: CustomFilter[];
   activeFilterIds: string[];
   onFilterChange: (filterIds: string[]) => void;
+  labels?: CalendarLabels;
 }
 
 export function Sidebar({ 
@@ -22,7 +24,8 @@ export function Sidebar({
   onSearchChange,
   customFilters = [],
   activeFilterIds,
-  onFilterChange 
+  onFilterChange,
+  labels = defaultLabels,
 }: SidebarProps) {
   const [miniCalendarMonth, setMiniCalendarMonth] = useState(currentDate);
 
@@ -48,14 +51,14 @@ export function Sidebar({
         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
           <CalendarIcon className="h-5 w-5 text-primary" />
         </div>
-        <span className="text-xl font-semibold text-foreground">Agenda</span>
+        <span className="text-xl font-semibold text-foreground">{labels.calendar}</span>
       </div>
 
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Buscar eventos..."
+          placeholder={labels.searchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-9 pr-9 h-9 text-sm"
@@ -100,12 +103,12 @@ export function Sidebar({
       {customFilters.length > 0 && (
         <div className="mt-6 space-y-2">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-muted-foreground">Filtros</h3>
+            <h3 className="text-sm font-medium text-muted-foreground">{labels.filters}</h3>
             <button
               onClick={handleSelectAll}
               className="text-xs text-primary hover:underline"
             >
-              {activeFilterIds.length === customFilters.length ? 'Limpar' : 'Todos'}
+              {activeFilterIds.length === customFilters.length ? labels.clearAll : labels.selectAll}
             </button>
           </div>
           <div className="space-y-1.5">

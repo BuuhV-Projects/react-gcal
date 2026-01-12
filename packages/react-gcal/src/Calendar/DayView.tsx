@@ -3,8 +3,8 @@ import {
   isSameDay,
   isToday,
 } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { CalendarEvent } from './types';
+import { CalendarLabels, defaultLabels } from './labels';
 import { cn } from '../lib/utils';
 import { Clock, FileText } from 'lucide-react';
 import { useState, DragEvent } from 'react';
@@ -15,6 +15,7 @@ interface DayViewProps {
   onTimeSlotClick: (date: Date, hour: number) => void;
   onEventClick: (event: CalendarEvent) => void;
   onEventDrop: (eventId: string, newDate: Date, newHour?: number) => void;
+  labels?: CalendarLabels;
 }
 
 const eventColorClasses: Record<string, { bg: string; border: string; light: string }> = {
@@ -30,7 +31,14 @@ const eventColorClasses: Record<string, { bg: string; border: string; light: str
   graphite: { bg: 'bg-event-graphite', border: 'border-gray-700', light: 'bg-gray-50' },
 };
 
-export function DayView({ currentDate, events, onTimeSlotClick, onEventClick, onEventDrop }: DayViewProps) {
+export function DayView({ 
+  currentDate, 
+  events, 
+  onTimeSlotClick, 
+  onEventClick, 
+  onEventDrop,
+  labels = defaultLabels,
+}: DayViewProps) {
   const [dragOverHour, setDragOverHour] = useState<number | null>(null);
   
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -113,15 +121,15 @@ export function DayView({ currentDate, events, onTimeSlotClick, onEventClick, on
             </div>
             <div>
               <div className="text-lg font-medium capitalize">
-                {format(currentDate, 'EEEE', { locale: ptBR })}
+                {format(currentDate, 'EEEE', { locale: labels.locale })}
               </div>
               <div className="text-sm text-muted-foreground capitalize">
-                {format(currentDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                {format(currentDate, 'PPP', { locale: labels.locale })}
               </div>
             </div>
             {dayEvents.length > 0 && (
               <div className="ml-auto text-sm text-muted-foreground">
-                {dayEvents.length} evento{dayEvents.length > 1 ? 's' : ''}
+                {dayEvents.length} {labels.events}
               </div>
             )}
           </div>
