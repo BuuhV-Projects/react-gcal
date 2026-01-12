@@ -1,5 +1,6 @@
 // Main exports
 export { Calendar } from './Calendar/Calendar';
+export type { CalendarProps } from './Calendar/Calendar';
 export { CalendarGrid } from './Calendar/CalendarGrid';
 export { CalendarHeader } from './Calendar/CalendarHeader';
 export { WeekView } from './Calendar/WeekView';
@@ -26,6 +27,9 @@ export { cn } from './lib/utils';
 // UI Components (re-export commonly used ones)
 export { Button, buttonVariants } from './ui/button';
 export type { ButtonProps } from './ui/button';
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './ui/card';
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
 
 // Styles - consumers should import this
 import './styles.css';

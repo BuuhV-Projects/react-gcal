@@ -1,7 +1,8 @@
 {
   "files": [],
   "references": [
-    { "path": "./packages/your-daily-planner" }
+    { "path": "./packages/your-daily-planner" },
+    { "path": "./apps/site" }
   ],
   "compilerOptions": {
     "baseUrl": ".",
