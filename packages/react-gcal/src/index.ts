@@ -1,36 +1,67 @@
-// Main exports
-export { Calendar } from './Calendar/Calendar';
-export type { CalendarProps } from './Calendar/Calendar';
-export { CalendarGrid } from './Calendar/CalendarGrid';
-export { CalendarHeader } from './Calendar/CalendarHeader';
-export { WeekView } from './Calendar/WeekView';
-export { DayView } from './Calendar/DayView';
-export { Sidebar } from './Calendar/Sidebar';
-export { EventModal } from './Calendar/EventModal';
+// NÃO exporte tudo dinamicamente
+// IMPORTA TUDO explicitamente para forçar flatten
 
-// Service exports
-export { CalendarService } from './Calendar/CalendarService';
-export { useCalendarService } from './Calendar/useCalendarService';
-export type { 
-  CalendarServiceDependencies,
-  CalendarServiceState,
-  CalendarServiceActions
-} from './Calendar/CalendarService';
-export type { CalendarServiceHook } from './Calendar/useCalendarService';
+import { Calendar } from './Calendar/Calendar';
+import { CalendarGrid } from './Calendar/CalendarGrid';
+import { CalendarHeader } from './Calendar/CalendarHeader';
+import { WeekView } from './Calendar/WeekView';
+import { DayView } from './Calendar/DayView';
+import { Sidebar } from './Calendar/Sidebar';
+import { EventModal } from './Calendar/EventModal';
 
-// Types
-export type { CalendarEvent, CalendarView, EventColor } from './Calendar/types';
+import { CalendarService } from './Calendar/CalendarService';
+import { useCalendarService } from './Calendar/useCalendarService';
 
-// Utils
-export { cn } from './lib/utils';
+import { Button, buttonVariants } from './ui/button';
+import {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from './ui/card';
 
-// UI Components (re-export commonly used ones)
-export { Button, buttonVariants } from './ui/button';
-export type { ButtonProps } from './ui/button';
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './ui/card';
-export { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from './ui/accordion';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from './ui/tabs';
 
-// Styles - consumers should import this
-import './styles.css';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from './ui/accordion';
 
+// 🔴 NÃO importar CSS aqui
+
+export {
+  Calendar,
+  CalendarGrid,
+  CalendarHeader,
+  WeekView,
+  DayView,
+  Sidebar,
+  EventModal,
+  CalendarService,
+  useCalendarService,
+  Button,
+  buttonVariants,
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+};
