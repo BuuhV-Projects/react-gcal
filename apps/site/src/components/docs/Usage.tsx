@@ -174,22 +174,88 @@ function App() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-foreground">Custom Styling</h2>
+        <h2 className="text-xl font-semibold text-foreground">Custom Filters</h2>
         <p className="text-muted-foreground">
-          Add custom classes to the calendar container:
+          Add custom filters to allow users to filter events by category, type, or any other criteria:
         </p>
         
         <CodeBlock language="tsx">
-{`import { Calendar } from 'react-gcal';
+{`import { Calendar, CustomFilter, CalendarEvent } from 'react-gcal';
 
 function App() {
+  const [events] = useState<CalendarEvent[]>([
+    { id: '1', title: 'Meeting', category: 'work', ... },
+    { id: '2', title: 'Lunch', category: 'personal', ... },
+  ]);
+
+  const customFilters: CustomFilter[] = [
+    { 
+      id: 'work', 
+      label: 'Work', 
+      predicate: (event) => event.category === 'work' 
+    },
+    { 
+      id: 'personal', 
+      label: 'Personal', 
+      predicate: (event) => event.category === 'personal' 
+    },
+  ];
+
   return (
     <Calendar
-      className="shadow-xl rounded-xl overflow-hidden"
+      events={events}
+      customFilters={customFilters}
     />
   );
 }`}
         </CodeBlock>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground">Internationalization (i18n)</h2>
+        <p className="text-muted-foreground">
+          Customize all text labels and date locale:
+        </p>
+        
+        <CodeBlock language="tsx">
+{`import { Calendar, englishLabels } from 'react-gcal';
+import { enUS } from 'date-fns/locale';
+
+// Use built-in English labels
+function App() {
+  return <Calendar labels={englishLabels} />;
+}
+
+// Or customize specific labels
+function AppCustom() {
+  return (
+    <Calendar
+      labels={{
+        create: 'New Event',
+        today: 'Today',
+        month: 'Month',
+        week: 'Week',
+        day: 'Day',
+        calendar: 'Calendar',
+        searchPlaceholder: 'Search events...',
+        filters: 'Filters',
+        selectAll: 'All',
+        clearAll: 'Clear',
+        weekDays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        moreEvents: 'more',
+        events: 'event(s)',
+        locale: enUS,
+      }}
+    />
+  );
+}`}
+        </CodeBlock>
+
+        <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+          <p className="text-sm text-foreground">
+            <strong>Tip:</strong> The <code className="bg-muted px-1 rounded">locale</code> property uses date-fns locales for date formatting. Import the locale you need from <code className="bg-muted px-1 rounded">date-fns/locale</code>.
+          </p>
+        </div>
       </section>
     </div>
   );
