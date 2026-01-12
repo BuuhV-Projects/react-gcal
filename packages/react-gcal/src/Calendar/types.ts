@@ -29,3 +29,6 @@ export interface CustomFilter {
   label: string;
   predicate: (event: CalendarEvent) => boolean;
 }
+
+export type { CalendarLabels } from './labels';
+export { defaultLabels, englishLabels, mergeLabels } from './labels';

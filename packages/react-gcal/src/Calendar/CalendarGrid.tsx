@@ -9,8 +9,8 @@ import {
   isSameDay,
   isToday
 } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { CalendarEvent } from './types';
+import { CalendarLabels, defaultLabels } from './labels';
 import { cn } from '../lib/utils';
 import { useState, DragEvent } from 'react';
 
@@ -20,6 +20,7 @@ interface CalendarGridProps {
   onDayClick: (date: Date) => void;
   onEventClick: (event: CalendarEvent) => void;
   onEventDrop: (eventId: string, newDate: Date, newHour?: number) => void;
+  labels?: CalendarLabels;
 }
 
 const eventColorClasses: Record<string, string> = {
@@ -35,7 +36,14 @@ const eventColorClasses: Record<string, string> = {
   graphite: 'bg-event-graphite text-white',
 };
 
-export function CalendarGrid({ currentDate, events, onDayClick, onEventClick, onEventDrop }: CalendarGridProps) {
+export function CalendarGrid({ 
+  currentDate, 
+  events, 
+  onDayClick, 
+  onEventClick, 
+  onEventDrop,
+  labels = defaultLabels,
+}: CalendarGridProps) {
   const [dragOverDate, setDragOverDate] = useState<Date | null>(null);
   
   const monthStart = startOfMonth(currentDate);
@@ -44,7 +52,6 @@ export function CalendarGrid({ currentDate, events, onDayClick, onEventClick, on
   const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
 
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-  const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 
   const getEventsForDay = (day: Date) => {
     return events.filter(event => isSameDay(new Date(event.date), day));
@@ -78,7 +85,7 @@ export function CalendarGrid({ currentDate, events, onDayClick, onEventClick, on
     <div className="flex-1 flex flex-col bg-background">
       {/* Week days header */}
       <div className="grid grid-cols-7 border-b border-border">
-        {weekDays.map((day) => (
+        {labels.weekDays.map((day) => (
           <div
             key={day}
             className="py-3 text-center text-sm font-medium text-muted-foreground"
@@ -142,7 +149,7 @@ export function CalendarGrid({ currentDate, events, onDayClick, onEventClick, on
                 ))}
                 {dayEvents.length > 3 && (
                   <div className="text-xs text-muted-foreground px-2">
-                    +{dayEvents.length - 3} mais
+                    +{dayEvents.length - 3} {labels.moreEvents}
                   </div>
                 )}
               </div>

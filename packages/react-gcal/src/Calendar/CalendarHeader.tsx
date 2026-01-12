@@ -1,10 +1,9 @@
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '../ui/button';
 import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { CalendarView } from './types';
+import { CalendarLabels, defaultLabels } from './labels';
 import styles from './CalendarHeader.module.css';
-import { cn } from '../lib/utils';
 
 interface CalendarHeaderProps {
   currentDate: Date;
@@ -14,6 +13,7 @@ interface CalendarHeaderProps {
   onToday: () => void;
   onViewChange: (view: CalendarView) => void;
   onAddEvent: () => void;
+  labels?: CalendarLabels;
 }
 
 export function CalendarHeader({
@@ -24,15 +24,22 @@ export function CalendarHeader({
   onToday,
   onViewChange,
   onAddEvent,
+  labels = defaultLabels,
 }: CalendarHeaderProps) {
   const getTitle = () => {
     if (view === 'month') {
-      return format(currentDate, 'MMMM yyyy', { locale: ptBR });
+      return format(currentDate, 'MMMM yyyy', { locale: labels.locale });
     }
     if (view === 'week') {
-      return format(currentDate, "'Semana de' dd 'de' MMMM", { locale: ptBR });
+      return `${labels.weekOf} ${format(currentDate, 'dd', { locale: labels.locale })} ${format(currentDate, 'MMMM', { locale: labels.locale })}`;
     }
-    return format(currentDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+    return format(currentDate, 'PPP', { locale: labels.locale });
+  };
+
+  const viewLabels: Record<CalendarView, string> = {
+    month: labels.month,
+    week: labels.week,
+    day: labels.day,
   };
 
   return (
@@ -40,7 +47,7 @@ export function CalendarHeader({
       <div className={styles.leftSection}>
         <Button variant="create" size="lg" onClick={onAddEvent} className="gap-2">
           <Plus className="h-5 w-5" />
-          Criar
+          {labels.create}
         </Button>
         
         <div className={styles.navigationButtons}>
@@ -53,7 +60,7 @@ export function CalendarHeader({
         </div>
         
         <Button variant="outline" size="sm" onClick={onToday}>
-          Hoje
+          {labels.today}
         </Button>
         
         <h1 className={styles.title}>
@@ -68,9 +75,8 @@ export function CalendarHeader({
             variant={view === v ? 'default' : 'ghost'}
             size="sm"
             onClick={() => onViewChange(v)}
-            className="capitalize"
           >
-            {v === 'month' ? 'Mês' : v === 'week' ? 'Semana' : 'Dia'}
+            {viewLabels[v]}
           </Button>
         ))}
       </div>
