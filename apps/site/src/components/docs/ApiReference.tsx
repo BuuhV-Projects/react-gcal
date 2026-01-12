@@ -72,6 +72,18 @@ export function ApiReference() {
                 defaultValue="-" 
                 description="Called when deleting an event" 
               />
+              <PropRow 
+                name="customFilters" 
+                type="CustomFilter[]" 
+                defaultValue="[]" 
+                description="Custom filter options for the sidebar" 
+              />
+              <PropRow 
+                name="labels" 
+                type="Partial<CalendarLabels>" 
+                defaultValue="defaultLabels (PT-BR)" 
+                description="Custom text labels and locale" 
+              />
             </tbody>
           </table>
         </div>
@@ -152,6 +164,59 @@ export function ApiReference() {
         <CodeBlock language="typescript">
 {`type CalendarView = 'month' | 'week' | 'day';`}
         </CodeBlock>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground">CustomFilter Type</h2>
+        
+        <CodeBlock language="typescript">
+{`interface CustomFilter {
+  id: string;           // Unique identifier
+  label: string;        // Display label in sidebar
+  predicate: (event: CalendarEvent) => boolean;  // Filter function
+}`}
+        </CodeBlock>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-semibold text-foreground">CalendarLabels Type</h2>
+        
+        <CodeBlock language="typescript">
+{`interface CalendarLabels {
+  // Header
+  create: string;
+  today: string;
+  month: string;
+  week: string;
+  day: string;
+  weekOf: string;
+  
+  // Sidebar
+  calendar: string;
+  searchPlaceholder: string;
+  filters: string;
+  selectAll: string;
+  clearAll: string;
+  
+  // Grid
+  weekDays: [string, string, string, string, string, string, string];
+  moreEvents: string;
+  
+  // Day view
+  events: string;
+  
+  // Date-fns locale for date formatting
+  locale: Locale;
+}`}
+        </CodeBlock>
+
+        <div className="p-4 bg-muted rounded-lg">
+          <h4 className="font-medium text-foreground mb-2">Built-in Label Sets</h4>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            <li><code className="bg-background px-1.5 py-0.5 rounded">defaultLabels</code> - Portuguese (Brazil)</li>
+            <li><code className="bg-background px-1.5 py-0.5 rounded">englishLabels</code> - English</li>
+          </ul>
+        </div>
       </section>
 
       <section className="space-y-4">
