@@ -13,6 +13,7 @@ export function useCalendarService(
     dependencies.events,
     dependencies.initialDate,
     dependencies.initialView,
+    dependencies.customFilters,
     dependencies.onEventView,
     dependencies.onEventAdd,
     dependencies.onEventEdit,
@@ -25,6 +26,12 @@ export function useCalendarService(
     service.updateEvents(dependencies.events);
   }, [service, dependencies.events]);
 
+  useMemo(() => {
+    if (dependencies.customFilters) {
+      service.updateCustomFilters(dependencies.customFilters);
+    }
+  }, [service, dependencies.customFilters]);
+
   // State for React re-renders - sync with service state
   const [state, setState] = useState<CalendarServiceState>(() => ({
     currentDate: service.currentDate,
@@ -32,7 +39,8 @@ export function useCalendarService(
     events: service.events,
     filteredEvents: service.filteredEvents,
     searchQuery: service.searchQuery,
-    activeFilters: service.activeFilters,
+    customFilters: service.customFilters,
+    activeFilterIds: service.activeFilterIds,
   }));
 
   // Helper to update state from service
@@ -43,7 +51,8 @@ export function useCalendarService(
       events: service.events,
       filteredEvents: service.filteredEvents,
       searchQuery: service.searchQuery,
-      activeFilters: service.activeFilters,
+      customFilters: service.customFilters,
+      activeFilterIds: service.activeFilterIds,
     });
   }, [service]);
 
@@ -61,8 +70,8 @@ export function useCalendarService(
       service.setSearchQuery(query);
       syncState();
     },
-    setActiveFilters: (filters) => {
-      service.setActiveFilters(filters);
+    setActiveFilterIds: (filterIds: string[]) => {
+      service.setActiveFilterIds(filterIds);
       syncState();
     },
     handlePrevious: () => {

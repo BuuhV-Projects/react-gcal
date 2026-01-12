@@ -6,6 +6,8 @@ export interface CalendarEvent {
   endTime: string;
   color: EventColor;
   description?: string;
+  category?: string;
+  [key: string]: unknown;
 }
 
 export type EventColor = 
@@ -21,3 +23,12 @@ export type EventColor =
   | 'graphite';
 
 export type CalendarView = 'month' | 'week' | 'day';
+
+export interface CustomFilter {
+  id: string;
+  label: string;
+  predicate: (event: CalendarEvent) => boolean;
+}
+
+export type { CalendarLabels } from './labels';
+export { defaultLabels, englishLabels, mergeLabels } from './labels';

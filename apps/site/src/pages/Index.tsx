@@ -44,9 +44,15 @@ const Index = () => {
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+<<<<<<< HEAD
               <span className="text-primary-foreground font-bold text-sm">YGCAP</span>
             </div>
             <span className="font-semibold text-lg text-foreground">React GCal</span>
+=======
+              <span className="text-primary-foreground font-bold text-sm">📅</span>
+            </div>
+            <span className="font-semibold text-lg text-foreground">react-gcal</span>
+>>>>>>> b4347a023fead91c052a604fed3c11fe10e3c0cd
           </div>
           
           <div className="hidden md:flex items-center gap-4">
@@ -148,10 +154,19 @@ function GettingStarted({ onNavigate }: { onNavigate: (section: Section) => void
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-bold text-foreground mb-4">Your Daily Planner</h1>
+        <h1 className="text-4xl font-bold text-foreground mb-4">react-gcal</h1>
         <p className="text-xl text-muted-foreground">
           A beautiful Google Calendar-inspired component library for React and Next.js applications.
         </p>
+      </div>
+
+      {/* Preview Image */}
+      <div className="rounded-xl overflow-hidden border border-border shadow-lg">
+        <img 
+          src="/calendar-preview.png" 
+          alt="react-gcal Calendar Preview" 
+          className="w-full h-auto"
+        />
       </div>
 
       {/* Features Grid */}
@@ -169,7 +184,7 @@ function GettingStarted({ onNavigate }: { onNavigate: (section: Section) => void
         <FeatureCard 
           icon="🔍" 
           title="Search & Filter" 
-          description="Find events quickly" 
+          description="Custom filters support" 
         />
         <FeatureCard 
           icon="🌈" 
@@ -177,9 +192,9 @@ function GettingStarted({ onNavigate }: { onNavigate: (section: Section) => void
           description="10 beautiful event colors" 
         />
         <FeatureCard 
-          icon="📱" 
-          title="Responsive" 
-          description="Works on any device" 
+          icon="🌍" 
+          title="i18n Ready" 
+          description="Full translation support" 
         />
         <FeatureCard 
           icon="🌙" 

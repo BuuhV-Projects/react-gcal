@@ -1,56 +1,47 @@
 import { useState } from 'react';
-import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Search, X } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import { Input } from '../ui/input';
 import { Checkbox } from '../ui/checkbox';
-import { EventColor } from './types';
+import { CustomFilter } from './types';
+import { CalendarLabels, defaultLabels } from './labels';
 
 interface SidebarProps {
   currentDate: Date;
   onDateSelect: (date: Date) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
-  activeFilters: EventColor[];
-  onFilterChange: (colors: EventColor[]) => void;
+  customFilters?: CustomFilter[];
+  activeFilterIds: string[];
+  onFilterChange: (filterIds: string[]) => void;
+  labels?: CalendarLabels;
 }
-
-const colorOptions: { color: EventColor; label: string }[] = [
-  { color: 'tomato', label: 'Tomate' },
-  { color: 'tangerine', label: 'Tangerina' },
-  { color: 'banana', label: 'Banana' },
-  { color: 'basil', label: 'Manjericão' },
-  { color: 'sage', label: 'Sálvia' },
-  { color: 'peacock', label: 'Pavão' },
-  { color: 'blueberry', label: 'Mirtilo' },
-  { color: 'lavender', label: 'Lavanda' },
-  { color: 'grape', label: 'Uva' },
-  { color: 'graphite', label: 'Grafite' },
-];
 
 export function Sidebar({ 
   currentDate, 
   onDateSelect, 
   searchQuery, 
   onSearchChange,
-  activeFilters,
-  onFilterChange 
+  customFilters = [],
+  activeFilterIds,
+  onFilterChange,
+  labels = defaultLabels,
 }: SidebarProps) {
   const [miniCalendarMonth, setMiniCalendarMonth] = useState(currentDate);
 
-  const handleFilterToggle = (color: EventColor) => {
-    if (activeFilters.includes(color)) {
-      onFilterChange(activeFilters.filter(c => c !== color));
+  const handleFilterToggle = (filterId: string) => {
+    if (activeFilterIds.includes(filterId)) {
+      onFilterChange(activeFilterIds.filter(id => id !== filterId));
     } else {
-      onFilterChange([...activeFilters, color]);
+      onFilterChange([...activeFilterIds, filterId]);
     }
   };
 
   const handleSelectAll = () => {
-    if (activeFilters.length === colorOptions.length) {
+    if (activeFilterIds.length === customFilters.length) {
       onFilterChange([]);
     } else {
-      onFilterChange(colorOptions.map(c => c.color));
+      onFilterChange(customFilters.map(f => f.id));
     }
   };
 
@@ -60,14 +51,14 @@ export function Sidebar({
         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
           <CalendarIcon className="h-5 w-5 text-primary" />
         </div>
-        <span className="text-xl font-semibold text-foreground">Agenda</span>
+        <span className="text-xl font-semibold text-foreground">{labels.calendar}</span>
       </div>
 
       {/* Search */}
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Buscar eventos..."
+          placeholder={labels.searchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           className="pl-9 pr-9 h-9 text-sm"
@@ -88,6 +79,7 @@ export function Sidebar({
         onSelect={(date) => date && onDateSelect(date)}
         month={miniCalendarMonth}
         onMonthChange={setMiniCalendarMonth}
+        locale={labels.locale}
         className="rounded-lg border-0 p-0"
         classNames={{
           months: "w-full",
@@ -108,36 +100,37 @@ export function Sidebar({
         }}
       />
 
-      {/* Color Filters */}
-      <div className="mt-6 space-y-2">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-muted-foreground">Filtrar por cor</h3>
-          <button
-            onClick={handleSelectAll}
-            className="text-xs text-primary hover:underline"
-          >
-            {activeFilters.length === colorOptions.length ? 'Limpar' : 'Todos'}
-          </button>
-        </div>
-        <div className="space-y-1.5">
-          {colorOptions.map(({ color, label }) => (
-            <label 
-              key={color} 
-              className="flex items-center gap-2 cursor-pointer group py-1 px-2 rounded-md hover:bg-accent/50 transition-colors"
+      {/* Custom Filters */}
+      {customFilters.length > 0 && (
+        <div className="mt-6 space-y-2">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-medium text-muted-foreground">{labels.filters}</h3>
+            <button
+              onClick={handleSelectAll}
+              className="text-xs text-primary hover:underline"
             >
-              <Checkbox
-                checked={activeFilters.includes(color)}
-                onCheckedChange={() => handleFilterToggle(color)}
-                className="h-4 w-4 border-muted-foreground/50"
-              />
-              <div className={`w-3 h-3 rounded-sm bg-event-${color}`} />
-              <span className="text-sm text-foreground group-hover:text-primary transition-colors">
-                {label}
-              </span>
-            </label>
-          ))}
+              {activeFilterIds.length === customFilters.length ? labels.clearAll : labels.selectAll}
+            </button>
+          </div>
+          <div className="space-y-1.5">
+            {customFilters.map((filter) => (
+              <label 
+                key={filter.id} 
+                className="flex items-center gap-2 cursor-pointer group py-1 px-2 rounded-md hover:bg-accent/50 transition-colors"
+              >
+                <Checkbox
+                  checked={activeFilterIds.includes(filter.id)}
+                  onCheckedChange={() => handleFilterToggle(filter.id)}
+                  className="h-4 w-4 border-muted-foreground/50"
+                />
+                <span className="text-sm text-foreground group-hover:text-primary transition-colors">
+                  {filter.label}
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </aside>
   );
 }

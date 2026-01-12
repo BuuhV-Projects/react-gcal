@@ -1,15 +1,11 @@
 import { addMonths, subMonths, addWeeks, subWeeks, addDays, subDays } from 'date-fns';
-import { CalendarEvent, CalendarView, EventColor } from './types';
-
-const allColors: EventColor[] = [
-  'tomato', 'tangerine', 'banana', 'basil', 'sage',
-  'peacock', 'blueberry', 'lavender', 'grape', 'graphite'
-];
+import { CalendarEvent, CalendarView, CustomFilter } from './types';
 
 export interface CalendarServiceDependencies {
   events?: CalendarEvent[];
   initialDate?: Date;
   initialView?: CalendarView;
+  customFilters?: CustomFilter[];
   onEventView?: (event: CalendarEvent) => void;
   onEventAdd?: (date: Date, time?: string) => void;
   onEventEdit?: (event: CalendarEvent) => void;
@@ -23,14 +19,15 @@ export interface CalendarServiceState {
   events: CalendarEvent[];
   filteredEvents: CalendarEvent[];
   searchQuery: string;
-  activeFilters: EventColor[];
+  customFilters: CustomFilter[];
+  activeFilterIds: string[];
 }
 
 export interface CalendarServiceActions {
   setCurrentDate: (date: Date) => void;
   setView: (view: CalendarView) => void;
   setSearchQuery: (query: string) => void;
-  setActiveFilters: (filters: EventColor[]) => void;
+  setActiveFilterIds: (filterIds: string[]) => void;
   handlePrevious: () => void;
   handleNext: () => void;
   handleToday: () => void;
@@ -49,7 +46,8 @@ export class CalendarService implements CalendarServiceState, CalendarServiceAct
   public events: CalendarEvent[];
   public filteredEvents: CalendarEvent[];
   public searchQuery: string;
-  public activeFilters: EventColor[];
+  public customFilters: CustomFilter[];
+  public activeFilterIds: string[];
 
   // Internal state
   private internalEvents: CalendarEvent[] = [];
@@ -60,7 +58,8 @@ export class CalendarService implements CalendarServiceState, CalendarServiceAct
     this.currentDate = dependencies.initialDate ?? new Date();
     this.view = dependencies.initialView ?? 'month';
     this.searchQuery = '';
-    this.activeFilters = [...allColors];
+    this.customFilters = dependencies.customFilters ?? [];
+    this.activeFilterIds = this.customFilters.map(f => f.id);
     
     // Initialize events
     this.events = dependencies.events ?? this.internalEvents;
@@ -82,8 +81,14 @@ export class CalendarService implements CalendarServiceState, CalendarServiceAct
     this.updateFilteredEvents();
   }
 
-  setActiveFilters(filters: EventColor[]): void {
-    this.activeFilters = filters;
+  setActiveFilterIds(filterIds: string[]): void {
+    this.activeFilterIds = filterIds;
+    this.updateFilteredEvents();
+  }
+
+  updateCustomFilters(filters: CustomFilter[]): void {
+    this.customFilters = filters;
+    this.activeFilterIds = filters.map(f => f.id);
     this.updateFilteredEvents();
   }
 
@@ -200,7 +205,19 @@ export class CalendarService implements CalendarServiceState, CalendarServiceAct
         event.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         event.description?.toLowerCase().includes(this.searchQuery.toLowerCase());
       
-      const matchesFilter = this.activeFilters.length === 0 || this.activeFilters.includes(event.color);
+      // If no custom filters, show all events
+      if (this.customFilters.length === 0) {
+        return matchesSearch;
+      }
+      
+      // If no active filters, show no events
+      if (this.activeFilterIds.length === 0) {
+        return false;
+      }
+      
+      // Check if event passes any of the active filters
+      const activeFilters = this.customFilters.filter(f => this.activeFilterIds.includes(f.id));
+      const matchesFilter = activeFilters.some(filter => filter.predicate(event));
       
       return matchesSearch && matchesFilter;
     });
