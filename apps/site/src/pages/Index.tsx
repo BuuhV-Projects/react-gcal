@@ -51,6 +51,12 @@ const Index = () => {
           
           <div className="hidden md:flex items-center gap-4">
             <a 
+              href="/demo"
+              className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Live Demo
+            </a>
+            <a 
               href="https://github.com" 
               target="_blank" 
               rel="noopener noreferrer"
