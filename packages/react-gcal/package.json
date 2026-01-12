@@ -2,7 +2,7 @@
   "name": "react-gcal",
   "version": "0.1.0",
   "type": "module",
-  "description": "A beautiful Google Calendar-inspired component library for React and Next.js >=12+",
+  "description": "A beautiful Google Calendar-inspired component library for React and Next.js",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -20,12 +20,10 @@
   ],
   "scripts": {
     "build": "tsup && sass src/styles/styles.scss dist/styles.css --no-source-map",
-    "build:legacy": "tsup --config tsup.config.legacy.ts && sass src/styles/styles.scss dist/styles.css --no-source-map",
     "dev": "tsup --watch",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "build:types": "tsc --project tsconfig.types.json",
-    "publish:legacy": "npm run build:legacy && npm run build:types && cp package.json package.json.backup && cp package.legacy.json package.json && npm publish --access public && mv package.json.backup package.json"
+    "build:types": "tsc --project tsconfig.types.json"
   },
   "keywords": [
     "react",

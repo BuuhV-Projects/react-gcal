@@ -126,19 +126,12 @@ npm run dev:lib
 
 ## Publishing
 
-The library supports two versions:
+To publish the library to npm:
 
-### Version Padrão (Next.js 12+)
 ```bash
 cd packages/react-gcal
 npm run build
 npm publish --access public
-```
-
-### Version LEGACY (Next.js 7-12)
-```bash
-cd packages/react-gcal
-npm run publish:legacy
 ```
 
 **Pré-requisitos**: Configure npm authentication (in the root directory):
@@ -148,7 +141,7 @@ npm config set _authToken=YOUR_NPM_TOKEN
 npm config fix
 ```
 
-Make sure to update the version in `packages/react-gcal/package.json` (or `package.legacy.json` for LEGACY) before publishing.
+Make sure to update the version in `packages/react-gcal/package.json` before publishing.
 
 > **Note**: npm requires Two-Factor Authentication (2FA) or a granular access token with bypass 2FA enabled to publish packages. See [packages/react-gcal/PUBLISH.md](packages/react-gcal/PUBLISH.md) for detailed instructions.
 
