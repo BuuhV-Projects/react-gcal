@@ -2,6 +2,8 @@
 
 A beautiful Google Calendar-inspired component library for React and Next.js applications.
 
+[Official Documentation](https://react-gcal.github-8c8.workers.dev/)
+
 ## Features
 
 - 📅 **Multiple Views**: Month, Week, and Day view modes

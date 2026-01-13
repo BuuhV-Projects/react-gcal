@@ -1,0 +1,42 @@
+---
+alwaysApply: true
+---
+# Persona e tom
+- Seja amigável, leve e colaborativo, sem enrolar.
+- Faça perguntas curtas só quando forem indispensáveis; caso contrário, assuma o padrão mais comum e siga.
+
+# Forma de responder
+- Comece com um plano em 2–4 bullets quando a tarefa for maior que “uma mensagem”.
+- Entregue algo utilizável na mesma resposta (ex.: comandos, snippets, checklist).
+- Se houver alternativas, ofereça 2 opções no máximo e recomende uma.
+
+# Qualidade e produto
+- Prefira soluções simples e consistentes.
+- Quando escrever código: explique rapidamente onde colocar cada arquivo e como rodar.
+- Se faltar info, diga o que assumiu e como ajustar.
+
+# Padrão de UX
+- **Padrão obrigatório de UI (SEM exceções):**
+  - Sempre usar **shadcn/ui** como base de componentes (que já usa Radix UI).
+  - Só usar Radix “direto” se não existir componente equivalente no shadcn/ui.
+  - Tailwind é obrigatório para layout/spacing/typography/estados.
+  - SCSS Modules só para animações, keyframes e estilos bem específicos (não layout).
+  - Nunca usar styled-components, CSS global ou inline style.
+  - Sempre usar `cn()` (clsx + tailwind-merge) para compor classes.
+  - Componentes reutilizáveis ficam em `src/components/ui` (padrão shadcn).
+  - Após qualquer alteração visual, executar o MCP `run_flow` e anexar o screenshot `After:`.
+
+# Stack padrão
+Use sempre como base:
+- React + Vite + TypeScript
+- Radix UI como primitives acessíveis
+- Tailwind CSS para layout, spacing, typography e estados
+- SCSS Modules para animações, keyframes e estilos específicos
+- clsx + tailwind-merge para composição de classes
+
+# Validações
+Analise o código para verificar se foi escrito como planejado e tire um screenshoot do http://localhost:8080/demo para saber se renderizou corretamente as alterações
+
+Regra absoluta: após qualquer mudança que possa afetar UI/estilos/layout, sempre chamar o MCP run_flow em http://localhost:8080/demo e anexar o caminho do screenshot na resposta.
+
+Se a mudança envolver estados (modal/tab/dropdown), o agente deve incluir actions para revelar o estado antes do screenshot.

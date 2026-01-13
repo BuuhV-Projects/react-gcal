@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Calendar as CalendarIcon, Search, X } from 'lucide-react';
+import { Calendar as CalendarIcon, Search, X, Plus } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
-import { Input } from '../ui/input';
 import { Checkbox } from '../ui/checkbox';
 import { CustomFilter } from './types';
 import { CalendarLabels, defaultLabels } from './labels';
+import styles from './Sidebar.module.scss';
 
 interface SidebarProps {
   currentDate: Date;
@@ -14,6 +14,7 @@ interface SidebarProps {
   customFilters?: CustomFilter[];
   activeFilterIds: string[];
   onFilterChange: (filterIds: string[]) => void;
+  onAddEvent?: () => void;
   labels?: CalendarLabels;
 }
 
@@ -25,6 +26,7 @@ export function Sidebar({
   customFilters = [],
   activeFilterIds,
   onFilterChange,
+  onAddEvent,
   labels = defaultLabels,
 }: SidebarProps) {
   const [miniCalendarMonth, setMiniCalendarMonth] = useState(currentDate);
@@ -46,84 +48,98 @@ export function Sidebar({
   };
 
   return (
-    <aside className="w-64 border-r border-border bg-card p-4 hidden lg:block overflow-y-auto">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-          <CalendarIcon className="h-5 w-5 text-primary" />
+    <aside className={styles.sidebar}>
+      {onAddEvent && (
+        <button onClick={onAddEvent} className={styles.createButton}>
+          <Plus />
+          {labels.create}
+        </button>
+      )}
+      
+      <div className={styles.header}>
+        <div className={styles.iconContainer}>
+          <CalendarIcon className={styles.icon} />
         </div>
-        <span className="text-xl font-semibold text-foreground">{labels.calendar}</span>
+        <span className={styles.title}>{labels.calendar}</span>
       </div>
 
       {/* Search */}
-      <div className="relative mb-4">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
+      <div className={styles.searchContainer}>
+        <Search className={styles.searchIcon} />
+        <input
+          type="text"
           placeholder={labels.searchPlaceholder}
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-9 pr-9 h-9 text-sm"
+          className={styles.searchInput}
         />
         {searchQuery && (
           <button
             onClick={() => onSearchChange('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            className={styles.clearButton}
+            type="button"
+            aria-label="Clear search"
           >
-            <X className="h-4 w-4" />
+            <X />
           </button>
         )}
       </div>
 
-      <Calendar
-        mode="single"
-        selected={currentDate}
-        onSelect={(date) => date && onDateSelect(date)}
-        month={miniCalendarMonth}
-        onMonthChange={setMiniCalendarMonth}
-        locale={labels.locale}
-        className="rounded-lg border-0 p-0"
-        classNames={{
-          months: "w-full",
-          month: "w-full",
-          table: "w-full",
-          head_row: "flex w-full",
-          head_cell: "text-muted-foreground rounded-md w-8 font-normal text-[0.7rem] flex-1 text-center",
-          row: "flex w-full mt-1",
-          cell: "text-center text-sm flex-1 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-          day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100 mx-auto flex items-center justify-center rounded-full hover:bg-accent transition-colors text-xs",
-          day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-          day_today: "bg-accent text-accent-foreground font-semibold",
-          day_outside: "text-muted-foreground opacity-50",
-          nav: "flex items-center justify-between mb-2",
-          nav_button: "h-7 w-7 bg-transparent p-0 opacity-70 hover:opacity-100 hover:bg-accent rounded-full",
-          caption: "flex justify-center pt-1 relative items-center",
-          caption_label: "text-sm font-medium capitalize",
-        }}
-      />
+      <div className={styles.miniCalendarWrapper}>
+        <Calendar
+          mode="single"
+          selected={currentDate}
+          onSelect={(date) => date && onDateSelect(date)}
+          month={miniCalendarMonth}
+          onMonthChange={setMiniCalendarMonth}
+          locale={labels.locale}
+          className={styles.miniCalendar}
+          classNames={{
+            months: styles.miniCalendarMonths,
+            month: styles.miniCalendarMonth,
+            table: styles.miniCalendarTable,
+            head_row: styles.miniCalendarHeadRow,
+            head_cell: styles.miniCalendarHeadCell,
+            row: styles.miniCalendarRow,
+            cell: styles.miniCalendarCell,
+            day: styles.miniCalendarDay,
+            day_selected: styles.miniCalendarDaySelected,
+            day_today: styles.miniCalendarDayToday,
+            day_outside: styles.miniCalendarDayOutside,
+            nav: styles.miniCalendarNav,
+            nav_button: styles.miniCalendarNavButton,
+            nav_button_previous: styles.miniCalendarNavButtonPrevious,
+            nav_button_next: styles.miniCalendarNavButtonNext,
+            caption: styles.miniCalendarCaption,
+            caption_label: styles.miniCalendarCaptionLabel,
+          }}
+        />
+      </div>
 
       {/* Custom Filters */}
       {customFilters.length > 0 && (
-        <div className="mt-6 space-y-2">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-medium text-muted-foreground">{labels.filters}</h3>
+        <div className={styles.filtersSection}>
+          <div className={styles.filtersHeader}>
+            <h3 className={styles.filtersTitle}>{labels.filters}</h3>
             <button
               onClick={handleSelectAll}
-              className="text-xs text-primary hover:underline"
+              className={styles.selectAllButton}
             >
               {activeFilterIds.length === customFilters.length ? labels.clearAll : labels.selectAll}
             </button>
           </div>
-          <div className="space-y-1.5">
+          <div className={styles.filtersList}>
             {customFilters.map((filter) => (
               <label 
                 key={filter.id} 
-                className="flex items-center gap-2 cursor-pointer group py-1 px-2 rounded-md hover:bg-accent/50 transition-colors"
+                className={styles.filterItem}
               >
                 <Checkbox
                   checked={activeFilterIds.includes(filter.id)}
                   onCheckedChange={() => handleFilterToggle(filter.id)}
                   className="h-4 w-4 border-muted-foreground/50"
                 />
-                <span className="text-sm text-foreground group-hover:text-primary transition-colors">
+                <span className={styles.filterLabel}>
                   {filter.label}
                 </span>
               </label>

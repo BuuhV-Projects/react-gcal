@@ -7,7 +7,7 @@ import { Sidebar } from './Sidebar';
 import { CalendarEvent, CalendarView, CalendarLabels, mergeLabels } from './types';
 import { useCalendarService } from './useCalendarService';
 import type { CalendarServiceDependencies } from './CalendarService';
-import styles from './Calendar.module.css';
+import styles from './Calendar.module.scss';
 import { cn } from '../lib/utils';
 
 export interface CalendarProps {
@@ -17,6 +17,7 @@ export interface CalendarProps {
   className?: string;
   customFilters?: import('./types').CustomFilter[];
   labels?: Partial<CalendarLabels>;
+  maxVisibleEvents?: number; // Limite de eventos visíveis por dia (padrão: 50)
   onEventView?: (event: CalendarEvent) => void;
   onEventAdd?: (date: Date, time?: string) => void;
   onEventEdit?: (event: CalendarEvent) => void;
@@ -31,6 +32,7 @@ export function Calendar({
   className,
   customFilters,
   labels: customLabels,
+  maxVisibleEvents = 50,
   onEventView,
   onEventAdd,
   onEventEdit,
@@ -62,7 +64,6 @@ export function Calendar({
         onNext={service.handleNext}
         onToday={service.handleToday}
         onViewChange={service.setView}
-        onAddEvent={service.handleAddEvent}
         labels={labels}
       />
       
@@ -75,6 +76,7 @@ export function Calendar({
           customFilters={service.customFilters}
           activeFilterIds={service.activeFilterIds}
           onFilterChange={service.setActiveFilterIds}
+          onAddEvent={service.handleAddEvent}
           labels={labels}
         />
         
@@ -97,6 +99,7 @@ export function Calendar({
               onEventClick={service.handleEventClick}
               onEventDrop={service.handleEventDrop}
               labels={labels}
+              maxVisibleEvents={maxVisibleEvents}
             />
           )}
           {service.view === 'day' && (
@@ -107,6 +110,7 @@ export function Calendar({
               onEventClick={service.handleEventClick}
               onEventDrop={service.handleEventDrop}
               labels={labels}
+              maxVisibleEvents={maxVisibleEvents}
             />
           )}
         </main>

@@ -1,4 +1,6 @@
+import React from 'react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Book, Code, Palette, Zap, Menu, X, Github, Package, ChevronRight } from 'lucide-react';
 import { Installation } from '../components/docs/Installation';
 import { Usage } from '../components/docs/Usage';
@@ -50,14 +52,14 @@ const Index = () => {
           </div>
           
           <div className="hidden md:flex items-center gap-4">
-            <a 
-              href="/demo"
+            <Link 
+              to="/demo"
               className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               Live Demo
-            </a>
+            </Link>
             <a 
-              href="https://github.com" 
+              href="https://github.com/BuuhV-Projects/react-gcal" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -65,7 +67,7 @@ const Index = () => {
               <Github className="w-5 h-5" />
             </a>
             <a 
-              href="https://npmjs.com" 
+              href="https://www.npmjs.com/package/react-gcal" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors"

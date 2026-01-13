@@ -1,0 +1,170 @@
+@use '../styles/variables' as *;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 42rem;
+  max-height: 80vh;
+  padding: 0;
+  overflow: hidden;
+}
+
+.header {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  flex-shrink: 0;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  min-height: 0;
+}
+
+.empty {
+  text-align: center;
+  padding: 2rem 0;
+  color: hsl(var(--muted-foreground));
+}
+
+.hourGroup {
+  margin-bottom: 1rem;
+}
+
+.hourHeader {
+  position: sticky;
+  top: 0;
+  background-color: hsl(var(--background) / 0.95);
+  backdrop-filter: blur(8px);
+  padding: 0.5rem 0;
+  z-index: 10;
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.hourTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin: 0;
+}
+
+.eventsList {
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.eventItem {
+  padding: 0.75rem;
+  border-radius: calc(var(--radius) - 2px);
+  border: 1px solid;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+}
+
+.eventContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.eventIcon {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.eventDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.eventTitle {
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  margin-bottom: 0.25rem;
+}
+
+.eventTime {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+    flex-shrink: 0;
+  }
+}
+
+.eventDescription {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Event colors
+.eventTomato {
+  background-color: hsl(var(--event-tomato) / 0.2);
+  border-color: hsl(var(--event-tomato) / 0.5);
+}
+
+.eventTangerine {
+  background-color: hsl(var(--event-tangerine) / 0.2);
+  border-color: hsl(var(--event-tangerine) / 0.5);
+}
+
+.eventBanana {
+  background-color: hsl(var(--event-banana) / 0.2);
+  border-color: hsl(var(--event-banana) / 0.5);
+}
+
+.eventBasil {
+  background-color: hsl(var(--event-basil) / 0.2);
+  border-color: hsl(var(--event-basil) / 0.5);
+}
+
+.eventSage {
+  background-color: hsl(var(--event-sage) / 0.2);
+  border-color: hsl(var(--event-sage) / 0.5);
+}
+
+.eventPeacock {
+  background-color: hsl(var(--event-peacock) / 0.2);
+  border-color: hsl(var(--event-peacock) / 0.5);
+}
+
+.eventBlueberry {
+  background-color: hsl(var(--event-blueberry) / 0.2);
+  border-color: hsl(var(--event-blueberry) / 0.5);
+}
+
+.eventLavender {
+  background-color: hsl(var(--event-lavender) / 0.2);
+  border-color: hsl(var(--event-lavender) / 0.5);
+}
+
+.eventGrape {
+  background-color: hsl(var(--event-grape) / 0.2);
+  border-color: hsl(var(--event-grape) / 0.5);
+}
+
+.eventGraphite {
+  background-color: hsl(var(--event-graphite) / 0.2);
+  border-color: hsl(var(--event-graphite) / 0.5);
+}
+
+.eventDefault {
+  background-color: hsl(var(--muted));
+  border-color: hsl(var(--border));
+}

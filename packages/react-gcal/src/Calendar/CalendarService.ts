@@ -210,9 +210,9 @@ export class CalendarService implements CalendarServiceState, CalendarServiceAct
         return matchesSearch;
       }
       
-      // If no active filters, show no events
+      // If no active filters, show all events (user hasn't selected any filter)
       if (this.activeFilterIds.length === 0) {
-        return false;
+        return matchesSearch;
       }
       
       // Check if event passes any of the active filters

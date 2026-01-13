@@ -1,3 +1,5 @@
+import React from 'react';
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -7,6 +9,8 @@ export interface CalendarEvent {
   color: EventColor;
   description?: string;
   category?: string;
+  type?: string;
+  icon?: React.ReactNode;
   [key: string]: unknown;
 }
 

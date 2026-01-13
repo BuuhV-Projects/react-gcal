@@ -13,6 +13,9 @@ import { CalendarEvent } from './types';
 import { CalendarLabels, defaultLabels } from './labels';
 import { cn } from '../lib/utils';
 import { useState, DragEvent } from 'react';
+import { ChevronDown } from 'lucide-react';
+import styles from './CalendarGrid.module.scss';
+import { EventsListModal } from './EventsListModal';
 
 interface CalendarGridProps {
   currentDate: Date;
@@ -23,17 +26,17 @@ interface CalendarGridProps {
   labels?: CalendarLabels;
 }
 
-const eventColorClasses: Record<string, string> = {
-  tomato: 'bg-event-tomato text-white',
-  tangerine: 'bg-event-tangerine text-white',
-  banana: 'bg-event-banana text-gray-800',
-  basil: 'bg-event-basil text-white',
-  sage: 'bg-event-sage text-white',
-  peacock: 'bg-event-peacock text-white',
-  blueberry: 'bg-event-blueberry text-white',
-  lavender: 'bg-event-lavender text-white',
-  grape: 'bg-event-grape text-white',
-  graphite: 'bg-event-graphite text-white',
+const eventColorClassMap: Record<string, string> = {
+  tomato: styles.tomato,
+  tangerine: styles.tangerine,
+  banana: styles.banana,
+  basil: styles.basil,
+  sage: styles.sage,
+  peacock: styles.peacock,
+  blueberry: styles.blueberry,
+  lavender: styles.lavender,
+  grape: styles.grape,
+  graphite: styles.graphite,
 };
 
 export function CalendarGrid({ 
@@ -45,6 +48,8 @@ export function CalendarGrid({
   labels = defaultLabels,
 }: CalendarGridProps) {
   const [dragOverDate, setDragOverDate] = useState<Date | null>(null);
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [showAllEvents, setShowAllEvents] = useState(false);
   
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -82,21 +87,18 @@ export function CalendarGrid({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-background">
+    <div className={styles.container}>
       {/* Week days header */}
-      <div className="grid grid-cols-7 border-b border-border">
+      <div className={styles.weekDaysHeader}>
         {labels.weekDays.map((day) => (
-          <div
-            key={day}
-            className="py-3 text-center text-sm font-medium text-muted-foreground"
-          >
+          <div key={day} className={styles.weekDay}>
             {day}
           </div>
         ))}
       </div>
 
       {/* Calendar grid */}
-      <div className="flex-1 grid grid-cols-7 grid-rows-[repeat(6,1fr)]">
+      <div className={styles.grid}>
         {days.map((day, index) => {
           const dayEvents = getEventsForDay(day);
           const isCurrentMonth = isSameMonth(day, currentDate);
@@ -111,25 +113,25 @@ export function CalendarGrid({
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, day)}
               className={cn(
-                "min-h-[100px] border-b border-r border-border p-1 cursor-pointer transition-colors hover:bg-accent/50",
-                !isCurrentMonth && "bg-muted/30",
-                isDragOver && "bg-primary/20 ring-2 ring-primary ring-inset"
+                styles.dayCell,
+                !isCurrentMonth && styles.notCurrentMonth,
+                isDragOver && styles.dragOver
               )}
             >
-              <div className="flex justify-center mb-1">
+              <div className={styles.dayNumberContainer}>
                 <span
                   className={cn(
-                    "w-7 h-7 flex items-center justify-center text-sm rounded-full transition-colors",
-                    isCurrentDay && "bg-primary text-primary-foreground font-semibold",
-                    !isCurrentDay && isCurrentMonth && "text-foreground hover:bg-accent",
-                    !isCurrentMonth && "text-muted-foreground"
+                    styles.dayNumber,
+                    isCurrentDay && styles.currentDay,
+                    !isCurrentDay && isCurrentMonth && styles.currentMonth,
+                    !isCurrentMonth && styles.notCurrentMonth
                   )}
                 >
                   {format(day, 'd')}
                 </span>
               </div>
 
-              <div className="space-y-1 overflow-hidden">
+              <div className={styles.eventsContainer}>
                 {dayEvents.slice(0, 3).map((event) => (
                   <div
                     key={event.id}
@@ -139,24 +141,57 @@ export function CalendarGrid({
                       e.stopPropagation();
                       onEventClick(event);
                     }}
-                    className={cn(
-                      "text-xs px-2 py-0.5 rounded truncate cursor-grab active:cursor-grabbing hover:opacity-80 transition-opacity",
-                      eventColorClasses[event.color]
-                    )}
+                    className={cn(styles.event, eventColorClassMap[event.color])}
                   >
-                    {event.startTime} {event.title}
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      {event.icon && (
+                        <span className="flex-shrink-0" style={{ fontSize: '0.875rem' }}>
+                          {event.icon}
+                        </span>
+                      )}
+                      <span className="truncate">
+                        {event.startTime} {event.title}
+                      </span>
+                    </div>
                   </div>
                 ))}
                 {dayEvents.length > 3 && (
-                  <div className="text-xs text-muted-foreground px-2">
-                    +{dayEvents.length - 3} {labels.moreEvents}
-                  </div>
+                  <button
+                    type="button"
+                    className={styles.moreEventsButton}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedDay(day);
+                      setShowAllEvents(true);
+                    }}
+                    aria-label={`Ver mais ${dayEvents.length - 3} ${labels.moreEvents}`}
+                  >
+                    <span className={styles.moreEventsText}>
+                      +{dayEvents.length - 3} {labels.moreEvents}
+                    </span>
+                    <ChevronDown className={styles.moreEventsIcon} />
+                  </button>
                 )}
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* Modal para ver todos os eventos */}
+      {selectedDay && (
+        <EventsListModal
+          isOpen={showAllEvents}
+          onClose={() => {
+            setShowAllEvents(false);
+            setSelectedDay(null);
+          }}
+          date={selectedDay}
+          events={selectedDay ? getEventsForDay(selectedDay) : []}
+          onEventClick={onEventClick}
+          labels={labels}
+        />
+      )}
     </div>
   );
 }

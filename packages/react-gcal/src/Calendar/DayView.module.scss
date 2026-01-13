@@ -1,0 +1,391 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.container {
+  flex: 1;
+  @include flex(column, flex-start, stretch);
+  background-color: hsl(var(--background));
+  overflow: hidden;
+}
+
+.header {
+  @include flex(row, flex-start, stretch);
+  @include border(bottom, 1px, solid, hsl(var(--border)));
+  position: sticky;
+  top: 0;
+  background-color: hsl(var(--background));
+  z-index: 10;
+}
+
+.timeColumnHeader {
+  width: 5rem;
+  flex-shrink: 0;
+  @include border(right, 1px, solid, hsl(var(--border)));
+}
+
+.headerContent {
+  flex: 1;
+  padding: 1rem 1.5rem;
+}
+
+.headerInfo {
+  @include flex(row, flex-start, center);
+  gap: 1rem;
+}
+
+.dayNumberCircle {
+  width: 3.5rem;
+  height: 3.5rem;
+  @include flex(row, center, center);
+  font-size: 1.5rem;
+  font-weight: 600;
+  @include rounded(9999px);
+  
+  &.currentDay {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  
+  &.notCurrentDay {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--foreground));
+  }
+}
+
+.dayInfo {
+  @include flex(column, flex-start, flex-start);
+}
+
+.dayName {
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: hsl(var(--foreground));
+}
+
+.dayDate {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  text-transform: capitalize;
+}
+
+.headerActions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.eventsCount {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  padding: 0.375rem 0.75rem;
+  background-color: hsl(var(--muted) / 0.5);
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+
+.viewAllButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+  border: 1.5px solid hsl(var(--border));
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  
+  &:hover {
+    background-color: hsl(var(--accent));
+    border-color: hsl(var(--primary) / 0.3);
+    color: hsl(var(--accent-foreground));
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+}
+
+.viewAllIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+}
+
+.timeGrid {
+  flex: 1;
+  @include flex(row, flex-start, stretch);
+  overflow: auto;
+  @include scrollbar-thin;
+}
+
+.timeColumn {
+  width: 5rem;
+  flex-shrink: 0;
+  @include border(right, 1px, solid, hsl(var(--border)));
+}
+
+.timeSlot {
+  height: 4rem;
+  @include border(bottom, 1px, solid, hsl(var(--border)));
+  @include flex(row, flex-end, center);
+  padding-right: 0.75rem;
+}
+
+.timeLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+}
+
+.dayColumn {
+  flex: 1;
+  position: relative;
+}
+
+.hourSlot {
+  height: 4rem;
+  @include border(bottom, 1px, solid, hsl(var(--border)));
+  cursor: pointer;
+  @include transition(background-color);
+  position: relative;
+  
+  &:hover {
+    background-color: hsl(var(--accent) / 0.3);
+  }
+  
+  &.dragOver {
+    background-color: hsl(var(--primary) / 0.2);
+    box-shadow: inset 0 0 0 2px hsl(var(--primary));
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: hsl(var(--border));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  &:hover::after {
+    opacity: 1;
+  }
+}
+
+.eventsOverlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  padding: 0 0.5rem;
+}
+
+.event {
+  position: absolute;
+  left: 0.5rem;
+  right: 1rem;
+  @include rounded(0.5rem);
+  cursor: grab;
+  pointer-events: auto;
+  overflow: hidden;
+  @include transition(all);
+  min-height: 3.75rem;
+  @include border(left, 4px, solid, transparent);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  
+  &:active {
+    cursor: grabbing;
+  }
+  
+  &:hover {
+    box-shadow: 0 4px 8px -2px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+  }
+  
+  // Event colors - light backgrounds with colored borders
+  &.tomato {
+    background-color: hsl(4 90% 97%);
+    @include border(left, 4px, solid, hsl(4 90% 40%));
+  }
+  
+  &.tangerine {
+    background-color: hsl(36 100% 97%);
+    @include border(left, 4px, solid, hsl(36 100% 40%));
+  }
+  
+  &.banana {
+    background-color: hsl(48 100% 97%);
+    @include border(left, 4px, solid, hsl(48 100% 40%));
+  }
+  
+  &.basil {
+    background-color: hsl(142 71% 97%);
+    @include border(left, 4px, solid, hsl(142 71% 35%));
+  }
+  
+  &.sage {
+    background-color: hsl(150 30% 97%);
+    @include border(left, 4px, solid, hsl(150 30% 50%));
+  }
+  
+  &.peacock {
+    background-color: hsl(186 100% 97%);
+    @include border(left, 4px, solid, hsl(186 100% 32%));
+  }
+  
+  &.blueberry {
+    background-color: hsl(214 100% 97%);
+    @include border(left, 4px, solid, hsl(214 100% 40%));
+  }
+  
+  &.lavender {
+    background-color: hsl(262 52% 97%);
+    @include border(left, 4px, solid, hsl(262 52% 37%));
+  }
+  
+  &.grape {
+    background-color: hsl(280 68% 97%);
+    @include border(left, 4px, solid, hsl(280 68% 40%));
+  }
+  
+  &.graphite {
+    background-color: hsl(220 9% 97%);
+    @include border(left, 4px, solid, hsl(220 9% 36%));
+  }
+}
+
+.eventContent {
+  padding: 0.75rem;
+  height: 100%;
+  @include flex(column, flex-start, stretch);
+  gap: 0.25rem;
+}
+
+.eventHeader {
+  @include flex(row, space-between, flex-start);
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.eventTitle {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  font-size: 0.9375rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.eventTitleContent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.eventIcon {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+}
+
+.eventColorDot {
+  width: 0.75rem;
+  height: 0.75rem;
+  @include rounded(9999px);
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+  
+  &.tomato { background-color: hsl(var(--event-tomato)); }
+  &.tangerine { background-color: hsl(var(--event-tangerine)); }
+  &.banana { background-color: hsl(var(--event-banana)); }
+  &.basil { background-color: hsl(var(--event-basil)); }
+  &.sage { background-color: hsl(var(--event-sage)); }
+  &.peacock { background-color: hsl(var(--event-peacock)); }
+  &.blueberry { background-color: hsl(var(--event-blueberry)); }
+  &.lavender { background-color: hsl(var(--event-lavender)); }
+  &.grape { background-color: hsl(var(--event-grape)); }
+  &.graphite { background-color: hsl(var(--event-graphite)); }
+}
+
+.eventTime {
+  @include flex(row, flex-start, center);
+  gap: 1rem;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.eventTimeItem {
+  @include flex(row, flex-start, center);
+  gap: 0.375rem;
+  flex-wrap: wrap;
+}
+
+.eventTimeIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.eventDuration {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.eventDescription {
+  @include flex(row, flex-start, flex-start);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-size: 0.8125rem;
+  color: hsl(var(--muted-foreground));
+  flex: 1;
+}
+
+.eventDescriptionIcon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  opacity: 0.7;
+}
+
+.eventDescriptionText {
+  @include text-ellipsis(2);
+}
+
+.currentTimeIndicator {
+  position: absolute;
+  left: 0;
+  right: 0;
+  @include flex(row, flex-start, center);
+  pointer-events: none;
+  z-index: 20;
+}
+
+.currentTimeDot {
+  width: 0.75rem;
+  height: 0.75rem;
+  @include rounded(9999px);
+  background-color: hsl(var(--destructive));
+  margin-left: -0.375rem;
+}
+
+.currentTimeLine {
+  flex: 1;
+  height: 0.125rem;
+  background-color: hsl(var(--destructive));
+}

@@ -1,0 +1,24 @@
+@use './variables' as *;
+@use './mixins' as *;
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+// ⚠️ IMPORTANTE: Este arquivo contém apenas variáveis CSS e utilitários
+// NÃO contém estilos globais que possam conflitar com o projeto host
+// As variáveis CSS são seguras e não afetam elementos existentes
+
+// Scrollbar utilities (classe utilitária, não global)
+.scrollbar-thin {
+  @include scrollbar-thin;
+}
+
+// Wrapper opcional para aplicar estilos base apenas dentro do calendário
+// Use apenas se quiser que os estilos base afetem elementos dentro do calendário
+.react-gcal-wrapper {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Google Sans', 'Roboto', sans-serif;
+  }
+}

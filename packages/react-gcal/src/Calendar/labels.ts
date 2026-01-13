@@ -23,6 +23,9 @@ export interface CalendarLabels {
   
   // Day view
   events: string; // "{count} event(s)"
+  viewAllEvents: string; // "View all {count} events"
+  noEvents: string; // "No events on this day"
+  close: string; // "Close"
   
   // Date-fns locale for date formatting
   locale: Locale;
@@ -50,6 +53,9 @@ export const defaultLabels: CalendarLabels = {
   
   // Day view
   events: 'evento(s)',
+  viewAllEvents: 'Ver todos os {count} eventos',
+  noEvents: 'Nenhum evento neste dia',
+  close: 'Fechar',
   
   // Date-fns locale
   locale: ptBR,
@@ -77,6 +83,9 @@ export const englishLabels: CalendarLabels = {
   
   // Day view
   events: 'event(s)',
+  viewAllEvents: 'View all {count} events',
+  noEvents: 'No events on this day',
+  close: 'Close',
   
   // Date-fns locale
   locale: enUS,

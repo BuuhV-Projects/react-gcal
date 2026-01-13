@@ -2,54 +2,69 @@ import React, { useState } from 'react';
 import { Calendar } from '../packages/react-gcal/src/Calendar/Calendar';
 import { CalendarEvent } from '../packages/react-gcal/src/Calendar/types';
 
-// Sample events for demonstration
-const initialEvents: CalendarEvent[] = [
-  {
-    id: '1',
-    title: 'Reunião de equipe',
-    date: new Date(),
-    startTime: '09:00',
-    endTime: '10:00',
-    color: 'blueberry',
-    description: 'Reunião semanal de alinhamento',
-  },
-  {
-    id: '2',
-    title: 'Almoço com cliente',
-    date: new Date(),
-    startTime: '12:00',
-    endTime: '14:00',
-    color: 'basil',
-  },
-  {
-    id: '3',
-    title: 'Apresentação do projeto',
-    date: new Date(Date.now() + 86400000 * 2),
-    startTime: '15:00',
-    endTime: '16:30',
-    color: 'tangerine',
-    description: 'Apresentação final do projeto para stakeholders',
-  },
-  {
-    id: '4',
-    title: 'Call com investidores',
-    date: new Date(Date.now() + 86400000),
-    startTime: '10:00',
-    endTime: '11:30',
-    color: 'grape',
-  },
-  {
-    id: '5',
-    title: 'Code review',
-    date: new Date(),
-    startTime: '16:00',
-    endTime: '17:00',
-    color: 'peacock',
-  },
-];
+const generateMassiveEvents = (): CalendarEvent[] => {
+  const events: CalendarEvent[] = [];
+  const colors: CalendarEvent["color"][] = [
+    "tomato",
+    "peacock",
+    "blueberry",
+    "sage",
+    "banana",
+    "lavender",
+    "basil",
+    "tangerine",
+    "grape",
+    "graphite",
+  ];
+  const titles = [
+    "Pop Chic / Inter (MA)",
+    "Pop Família / Inter (M)",
+    "R&B / Inter (M)",
+    "Jazz Lounge / Relaxed",
+    "Rock Classics / Energy",
+    "Electronic Vibes / Dance",
+    "Acoustic Session / Chill",
+    "Latin Beats / Tropical",
+    "Hip Hop Mix / Urban",
+    "Classical Hour / Elegant",
+  ];
+
+  // Start from 3 months ago
+  const startDate = new Date();
+  startDate.setMonth(startDate.getMonth() - 3);
+
+  let eventId = 0;
+
+  // Generate ~175 events per day for stress testing
+  for (let dayOffset = 0; dayOffset < 60; dayOffset++) {
+    const currentDate = new Date(startDate);
+    currentDate.setDate(currentDate.getDate() + dayOffset);
+
+    // 175 events per day for stress testing
+    const eventsPerDay = 175;
+
+    for (let i = 0; i < eventsPerDay; i++) {
+      const startHour = 3 + Math.floor(Math.random() * 18);
+      const duration = 1 + Math.floor(Math.random() * 8);
+      const endHour = Math.min(startHour + duration, 23);
+
+      events.push({
+        id: `event-${eventId++}`,
+        title: titles[Math.floor(Math.random() * titles.length)],
+        date: new Date(currentDate),
+        startTime: `${startHour.toString().padStart(2, "0")}:00`,
+        endTime: `${endHour.toString().padStart(2, "0")}:59`,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        description: `Schedule ID: ${1000000 + eventId}`,
+      });
+    }
+  }
+
+  return events;
+};
 
 const App = () => {
-  const [events, setEvents] = useState<CalendarEvent[]>(initialEvents);
+  const [events, setEvents] = useState<CalendarEvent[]>(generateMassiveEvents());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);

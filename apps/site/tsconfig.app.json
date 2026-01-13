@@ -23,8 +23,8 @@
 
     "paths": {
       "@/*": ["./src/*"],
-      "react-gcal": ["../../packages/react-gcal/src"]
-    }
+    },
+    "typeRoots": ["../../node_modules/@types"]
   },
   "include": ["src"]
 }

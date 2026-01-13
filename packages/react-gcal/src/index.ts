@@ -13,28 +13,6 @@ import { CalendarService } from './Calendar/CalendarService';
 import { useCalendarService } from './Calendar/useCalendarService';
 
 import { Button, buttonVariants } from './ui/button';
-import {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from './ui/card';
-
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from './ui/tabs';
-
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from './ui/accordion';
 
 // Re-export types
 export type { CalendarEvent, CalendarView, EventColor, CustomFilter, CalendarLabels } from './Calendar/types';
@@ -55,18 +33,4 @@ export {
   useCalendarService,
   Button,
   buttonVariants,
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
 };

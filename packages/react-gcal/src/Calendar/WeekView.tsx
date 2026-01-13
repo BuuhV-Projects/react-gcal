@@ -10,6 +10,10 @@ import { CalendarEvent } from './types';
 import { CalendarLabels, defaultLabels } from './labels';
 import { cn } from '../lib/utils';
 import { useState, DragEvent } from 'react';
+import styles from './WeekView.module.scss';
+import { EventsListModal } from './EventsListModal';
+import { Button } from '../ui/button';
+import { List } from 'lucide-react';
 
 interface WeekViewProps {
   currentDate: Date;
@@ -18,19 +22,20 @@ interface WeekViewProps {
   onEventClick: (event: CalendarEvent) => void;
   onEventDrop: (eventId: string, newDate: Date, newHour?: number) => void;
   labels?: CalendarLabels;
+  maxVisibleEvents?: number;
 }
 
-const eventColorClasses: Record<string, string> = {
-  tomato: 'bg-event-tomato text-white border-l-4 border-red-700',
-  tangerine: 'bg-event-tangerine text-white border-l-4 border-orange-600',
-  banana: 'bg-event-banana text-gray-800 border-l-4 border-yellow-500',
-  basil: 'bg-event-basil text-white border-l-4 border-green-700',
-  sage: 'bg-event-sage text-white border-l-4 border-teal-600',
-  peacock: 'bg-event-peacock text-white border-l-4 border-cyan-700',
-  blueberry: 'bg-event-blueberry text-white border-l-4 border-blue-700',
-  lavender: 'bg-event-lavender text-white border-l-4 border-purple-700',
-  grape: 'bg-event-grape text-white border-l-4 border-purple-800',
-  graphite: 'bg-event-graphite text-white border-l-4 border-gray-700',
+const eventColorClassMap: Record<string, string> = {
+  tomato: styles.tomato,
+  tangerine: styles.tangerine,
+  banana: styles.banana,
+  basil: styles.basil,
+  sage: styles.sage,
+  peacock: styles.peacock,
+  blueberry: styles.blueberry,
+  lavender: styles.lavender,
+  grape: styles.grape,
+  graphite: styles.graphite,
 };
 
 export function WeekView({ 
@@ -40,8 +45,11 @@ export function WeekView({
   onEventClick, 
   onEventDrop,
   labels = defaultLabels,
+  maxVisibleEvents = 50,
 }: WeekViewProps) {
   const [dragOverSlot, setDragOverSlot] = useState<{ day: Date; hour: number } | null>(null);
+  const [selectedDay, setSelectedDay] = useState<Date | null>(null);
+  const [showAllEvents, setShowAllEvents] = useState(false);
   
   const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
   const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 });
@@ -51,6 +59,11 @@ export function WeekView({
 
   const getEventsForDay = (day: Date) => {
     return events.filter(event => isSameDay(new Date(event.date), day));
+  };
+
+  const handleViewAllEvents = (day: Date) => {
+    setSelectedDay(day);
+    setShowAllEvents(true);
   };
 
   const parseTime = (timeStr: string): { hours: number; minutes: number } => {
@@ -99,27 +112,18 @@ export function WeekView({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-background overflow-hidden">
+    <div className={styles.container}>
       {/* Header with days */}
-      <div className="flex border-b border-border sticky top-0 bg-background z-10">
-        <div className="w-16 flex-shrink-0 border-r border-border" />
+      <div className={styles.header}>
+        <div className={styles.timeColumnHeader} />
         {days.map((day, index) => {
           const isCurrentDay = isToday(day);
           return (
-            <div
-              key={day.toISOString()}
-              className="flex-1 py-2 text-center border-r border-border last:border-r-0"
-            >
-              <div className="text-xs text-muted-foreground uppercase">
+            <div key={day.toISOString()} className={styles.dayHeader}>
+              <div className={styles.weekDayLabel}>
                 {labels.weekDays[index]}
               </div>
-              <div
-                className={cn(
-                  "w-10 h-10 mx-auto flex items-center justify-center text-xl font-medium rounded-full mt-1",
-                  isCurrentDay && "bg-primary text-primary-foreground",
-                  !isCurrentDay && "text-foreground"
-                )}
-              >
+              <div className={cn(styles.dayNumber, isCurrentDay && styles.currentDay)}>
                 {format(day, 'd')}
               </div>
             </div>
@@ -128,15 +132,12 @@ export function WeekView({
       </div>
 
       {/* Time grid */}
-      <div className="flex-1 flex overflow-auto scrollbar-thin">
+      <div className={styles.timeGrid}>
         {/* Time column */}
-        <div className="w-16 flex-shrink-0 border-r border-border">
+        <div className={styles.timeColumn}>
           {hours.map((hour) => (
-            <div
-              key={hour}
-              className="h-14 border-b border-border flex items-center justify-end pr-2"
-            >
-              <span className="text-xs text-muted-foreground">
+            <div key={hour} className={styles.timeSlot}>
+              <span className={styles.timeLabel}>
                 {hour.toString().padStart(2, '0')}:00
               </span>
             </div>
@@ -144,15 +145,14 @@ export function WeekView({
         </div>
 
         {/* Days columns */}
-        <div className="flex-1 flex">
+        <div className={styles.daysContainer}>
           {days.map((day) => {
-            const dayEvents = getEventsForDay(day);
+            const allDayEvents = getEventsForDay(day);
+            const visibleEvents = allDayEvents.slice(0, maxVisibleEvents);
+            const hasMoreEvents = allDayEvents.length > maxVisibleEvents;
             
             return (
-              <div
-                key={day.toISOString()}
-                className="flex-1 relative border-r border-border last:border-r-0"
-              >
+              <div key={day.toISOString()} className={styles.dayColumn}>
                 {/* Hour slots */}
                 {hours.map((hour) => {
                   const isDragOver = dragOverSlot && 
@@ -166,17 +166,14 @@ export function WeekView({
                       onDragOver={(e) => handleDragOver(e, day, hour)}
                       onDragLeave={handleDragLeave}
                       onDrop={(e) => handleDrop(e, day, hour)}
-                      className={cn(
-                        "h-14 border-b border-border hover:bg-accent/30 cursor-pointer transition-colors",
-                        isDragOver && "bg-primary/20"
-                      )}
+                      className={cn(styles.hourSlot, isDragOver && styles.dragOver)}
                     />
                   );
                 })}
 
                 {/* Events overlay */}
-                <div className="absolute inset-0 pointer-events-none">
-                  {dayEvents.map((event) => {
+                <div className={styles.eventsOverlay}>
+                  {visibleEvents.map((event) => {
                     const position = getEventPosition(event);
                     return (
                       <div
@@ -187,31 +184,74 @@ export function WeekView({
                           e.stopPropagation();
                           onEventClick(event);
                         }}
-                        className={cn(
-                          "absolute left-1 right-1 rounded-md px-2 py-1 cursor-grab active:cursor-grabbing pointer-events-auto overflow-hidden transition-opacity hover:opacity-90",
-                          eventColorClasses[event.color]
-                        )}
+                        className={cn(styles.event, eventColorClassMap[event.color])}
                         style={{
                           top: position.top,
                           height: position.height,
                           minHeight: '28px',
                         }}
                       >
-                        <div className="text-xs font-medium truncate">
-                          {event.title}
+                        <div className={styles.eventTitle}>
+                          <div className="flex items-center gap-1.5">
+                            {event.icon && (
+                              <span className="flex-shrink-0" style={{ fontSize: '0.875rem' }}>
+                                {event.icon}
+                              </span>
+                            )}
+                            <span>{event.title}</span>
+                          </div>
                         </div>
-                        <div className="text-xs opacity-90 truncate">
+                        <div className={styles.eventTime}>
                           {event.startTime} - {event.endTime}
                         </div>
                       </div>
                     );
                   })}
+                  
+                  {/* Indicador de mais eventos */}
+                  {hasMoreEvents && (
+                    <div
+                      className={cn(
+                        styles.event,
+                        'bg-muted/50 border-2 border-dashed border-muted-foreground/30 cursor-pointer hover:bg-muted'
+                      )}
+                      style={{
+                        top: '0px',
+                        height: '32px',
+                        minHeight: '32px',
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewAllEvents(day);
+                      }}
+                    >
+                      <div className="flex items-center justify-center h-full text-xs text-muted-foreground font-medium">
+                        <List className="h-3 w-3 mr-1" />
+                        +{allDayEvents.length - maxVisibleEvents} {labels.moreEvents}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             );
           })}
         </div>
       </div>
+
+      {/* Modal para ver todos os eventos */}
+      {selectedDay && (
+        <EventsListModal
+          isOpen={showAllEvents}
+          onClose={() => {
+            setShowAllEvents(false);
+            setSelectedDay(null);
+          }}
+          date={selectedDay}
+          events={selectedDay ? getEventsForDay(selectedDay) : []}
+          onEventClick={onEventClick}
+          labels={labels}
+        />
+      )}
     </div>
   );
 }

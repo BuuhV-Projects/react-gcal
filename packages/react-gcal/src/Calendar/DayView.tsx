@@ -6,8 +6,10 @@ import {
 import { CalendarEvent } from './types';
 import { CalendarLabels, defaultLabels } from './labels';
 import { cn } from '../lib/utils';
-import { Clock, FileText } from 'lucide-react';
+import { Clock, FileText, List } from 'lucide-react';
 import { useState, DragEvent } from 'react';
+import styles from './DayView.module.scss';
+import { EventsListModal } from './EventsListModal';
 
 interface DayViewProps {
   currentDate: Date;
@@ -16,19 +18,33 @@ interface DayViewProps {
   onEventClick: (event: CalendarEvent) => void;
   onEventDrop: (eventId: string, newDate: Date, newHour?: number) => void;
   labels?: CalendarLabels;
+  maxVisibleEvents?: number;
 }
 
-const eventColorClasses: Record<string, { bg: string; border: string; light: string }> = {
-  tomato: { bg: 'bg-event-tomato', border: 'border-red-700', light: 'bg-red-50' },
-  tangerine: { bg: 'bg-event-tangerine', border: 'border-orange-600', light: 'bg-orange-50' },
-  banana: { bg: 'bg-event-banana', border: 'border-yellow-500', light: 'bg-yellow-50' },
-  basil: { bg: 'bg-event-basil', border: 'border-green-700', light: 'bg-green-50' },
-  sage: { bg: 'bg-event-sage', border: 'border-teal-600', light: 'bg-teal-50' },
-  peacock: { bg: 'bg-event-peacock', border: 'border-cyan-700', light: 'bg-cyan-50' },
-  blueberry: { bg: 'bg-event-blueberry', border: 'border-blue-700', light: 'bg-blue-50' },
-  lavender: { bg: 'bg-event-lavender', border: 'border-purple-700', light: 'bg-purple-50' },
-  grape: { bg: 'bg-event-grape', border: 'border-purple-800', light: 'bg-purple-50' },
-  graphite: { bg: 'bg-event-graphite', border: 'border-gray-700', light: 'bg-gray-50' },
+const eventColorClassMap: Record<string, string> = {
+  tomato: styles.tomato,
+  tangerine: styles.tangerine,
+  banana: styles.banana,
+  basil: styles.basil,
+  sage: styles.sage,
+  peacock: styles.peacock,
+  blueberry: styles.blueberry,
+  lavender: styles.lavender,
+  grape: styles.grape,
+  graphite: styles.graphite,
+};
+
+const eventColorDotClassMap: Record<string, string> = {
+  tomato: styles.tomato,
+  tangerine: styles.tangerine,
+  banana: styles.banana,
+  basil: styles.basil,
+  sage: styles.sage,
+  peacock: styles.peacock,
+  blueberry: styles.blueberry,
+  lavender: styles.lavender,
+  grape: styles.grape,
+  graphite: styles.graphite,
 };
 
 export function DayView({ 
@@ -38,13 +54,17 @@ export function DayView({
   onEventClick, 
   onEventDrop,
   labels = defaultLabels,
+  maxVisibleEvents = 50,
 }: DayViewProps) {
   const [dragOverHour, setDragOverHour] = useState<number | null>(null);
+  const [showAllEvents, setShowAllEvents] = useState(false);
   
   const hours = Array.from({ length: 24 }, (_, i) => i);
   const isCurrentDay = isToday(currentDate);
 
-  const dayEvents = events.filter(event => isSameDay(new Date(event.date), currentDate));
+  const allDayEvents = events.filter(event => isSameDay(new Date(event.date), currentDate));
+  const visibleEvents = allDayEvents.slice(0, maxVisibleEvents);
+  const hasMoreEvents = allDayEvents.length > maxVisibleEvents;
 
   const parseTime = (timeStr: string): { hours: number; minutes: number } => {
     const [hours, minutes] = timeStr.split(':').map(Number);
@@ -104,48 +124,56 @@ export function DayView({
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-background overflow-hidden">
+    <div className={styles.container}>
       {/* Header with day info */}
-      <div className="flex border-b border-border sticky top-0 bg-background z-10">
-        <div className="w-20 flex-shrink-0 border-r border-border" />
-        <div className="flex-1 py-4 px-6">
-          <div className="flex items-center gap-4">
+      <div className={styles.header}>
+        <div className={styles.timeColumnHeader} />
+        <div className={styles.headerContent}>
+          <div className={styles.headerInfo}>
             <div
               className={cn(
-                "w-14 h-14 flex items-center justify-center text-2xl font-semibold rounded-full",
-                isCurrentDay && "bg-primary text-primary-foreground",
-                !isCurrentDay && "bg-muted text-foreground"
+                styles.dayNumberCircle,
+                isCurrentDay ? styles.currentDay : styles.notCurrentDay
               )}
             >
               {format(currentDate, 'd')}
             </div>
-            <div>
-              <div className="text-lg font-medium capitalize">
+            <div className={styles.dayInfo}>
+              <div className={styles.dayName}>
                 {format(currentDate, 'EEEE', { locale: labels.locale })}
               </div>
-              <div className="text-sm text-muted-foreground capitalize">
+              <div className={styles.dayDate}>
                 {format(currentDate, 'PPP', { locale: labels.locale })}
               </div>
             </div>
-            {dayEvents.length > 0 && (
-              <div className="ml-auto text-sm text-muted-foreground">
-                {dayEvents.length} {labels.events}
-              </div>
-            )}
+            <div className={styles.headerActions}>
+              {allDayEvents.length > 0 && (
+                <div className={styles.eventsCount}>
+                  {allDayEvents.length} {labels.events}
+                </div>
+              )}
+              {hasMoreEvents && (
+                <button
+                  type="button"
+                  className={styles.viewAllButton}
+                  onClick={() => setShowAllEvents(true)}
+                >
+                  <List className={styles.viewAllIcon} />
+                  {labels.viewAllEvents.replace('{count}', allDayEvents.length.toString())}
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Time grid */}
-      <div className="flex-1 flex overflow-auto scrollbar-thin">
+      <div className={styles.timeGrid}>
         {/* Time column */}
-        <div className="w-20 flex-shrink-0 border-r border-border">
+        <div className={styles.timeColumn}>
           {hours.map((hour) => (
-            <div
-              key={hour}
-              className="h-16 border-b border-border flex items-center justify-end pr-3"
-            >
-              <span className="text-xs text-muted-foreground font-medium">
+            <div key={hour} className={styles.timeSlot}>
+              <span className={styles.timeLabel}>
                 {hour.toString().padStart(2, '0')}:00
               </span>
             </div>
@@ -153,7 +181,7 @@ export function DayView({
         </div>
 
         {/* Day column with events */}
-        <div className="flex-1 relative">
+        <div className={styles.dayColumn}>
           {/* Hour slots */}
           {hours.map((hour) => {
             const isDragOver = dragOverHour === hour;
@@ -165,19 +193,15 @@ export function DayView({
                 onDragOver={(e) => handleDragOver(e, hour)}
                 onDragLeave={handleDragLeave}
                 onDrop={(e) => handleDrop(e, hour)}
-                className={cn(
-                  "h-16 border-b border-border hover:bg-accent/30 cursor-pointer transition-colors",
-                  isDragOver && "bg-primary/20"
-                )}
+                className={cn(styles.hourSlot, isDragOver && styles.dragOver)}
               />
             );
           })}
 
           {/* Events overlay */}
-          <div className="absolute inset-0 pointer-events-none px-2">
-            {dayEvents.map((event) => {
+          <div className={styles.eventsOverlay}>
+            {visibleEvents.map((event) => {
               const position = getEventPosition(event);
-              const colors = eventColorClasses[event.color];
               
               return (
                 <div
@@ -188,37 +212,40 @@ export function DayView({
                     e.stopPropagation();
                     onEventClick(event);
                   }}
-                  className={cn(
-                    "absolute left-2 right-4 rounded-lg cursor-grab active:cursor-grabbing pointer-events-auto overflow-hidden transition-all hover:shadow-lg border-l-4",
-                    colors.light,
-                    colors.border
-                  )}
+                  className={cn(styles.event, eventColorClassMap[event.color])}
                   style={{
                     top: position.top,
                     height: position.height,
                     minHeight: '60px',
                   }}
                 >
-                  <div className="p-3 h-full flex flex-col">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-semibold text-foreground text-base">
-                        {event.title}
+                  <div className={styles.eventContent}>
+                    <div className={styles.eventHeader}>
+                      <h3 className={styles.eventTitle}>
+                        <div className={styles.eventTitleContent}>
+                          {event.icon && (
+                            <span className={styles.eventIcon}>
+                              {event.icon}
+                            </span>
+                          )}
+                          <span>{event.title}</span>
+                        </div>
                       </h3>
-                      <div className={cn("w-3 h-3 rounded-full flex-shrink-0 mt-1", colors.bg)} />
+                      <div className={cn(styles.eventColorDot, eventColorDotClassMap[event.color])} />
                     </div>
                     
-                    <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3.5 w-3.5" />
+                    <div className={styles.eventTime}>
+                      <div className={styles.eventTimeItem}>
+                        <Clock className={styles.eventTimeIcon} />
                         <span>{event.startTime} - {event.endTime}</span>
-                        <span className="text-xs">({getDurationText(event)})</span>
+                        <span className={styles.eventDuration}>({getDurationText(event)})</span>
                       </div>
                     </div>
                     
                     {event.description && (
-                      <div className="flex items-start gap-1 mt-2 text-sm text-muted-foreground flex-1">
-                        <FileText className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
-                        <p className="line-clamp-2">{event.description}</p>
+                      <div className={styles.eventDescription}>
+                        <FileText className={styles.eventDescriptionIcon} />
+                        <p className={styles.eventDescriptionText}>{event.description}</p>
                       </div>
                     )}
                   </div>
@@ -233,6 +260,16 @@ export function DayView({
           )}
         </div>
       </div>
+
+      {/* Modal para ver todos os eventos */}
+      <EventsListModal
+        isOpen={showAllEvents}
+        onClose={() => setShowAllEvents(false)}
+        date={currentDate}
+        events={allDayEvents}
+        onEventClick={onEventClick}
+        labels={labels}
+      />
     </div>
   );
 }
@@ -245,11 +282,11 @@ function CurrentTimeIndicator({ hourRowPx }: { hourRowPx: number }) {
 
   return (
     <div
-      className="absolute left-0 right-0 flex items-center pointer-events-none z-20"
+      className={styles.currentTimeIndicator}
       style={{ top: `${topPx}px` }}
     >
-      <div className="w-3 h-3 rounded-full bg-destructive -ml-1.5" />
-      <div className="flex-1 h-0.5 bg-destructive" />
+      <div className={styles.currentTimeDot} />
+      <div className={styles.currentTimeLine} />
     </div>
   );
 }

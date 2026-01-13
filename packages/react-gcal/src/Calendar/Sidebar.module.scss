@@ -1,0 +1,386 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.sidebar {
+  width: 16rem;
+  @include border(right, 1px, solid, hsl(var(--border)));
+  background-color: hsl(var(--card));
+  padding: 1rem;
+  display: none;
+  overflow-y: auto;
+  @include scrollbar-thin;
+  
+  @media (min-width: 1024px) {
+    display: block;
+  }
+}
+
+.createButton {
+  width: 100%;
+  @include flex(row, center, center);
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding: 0 1.5rem;
+  margin-bottom: 1rem;
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  @include rounded(9999px);
+  font-weight: 500;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  @include transition(all);
+  
+  &:hover {
+    background-color: hsl(var(--primary) / 0.9);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+}
+
+.header {
+  @include flex(row, flex-start, center);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.iconContainer {
+  width: 2.5rem;
+  height: 2.5rem;
+  @include rounded(9999px);
+  background-color: hsl(var(--primary) / 0.1);
+  @include flex(row, center, center);
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: hsl(var(--primary));
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.searchContainer {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: hsl(var(--muted-foreground));
+  z-index: 1;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 2.25rem;
+  padding-left: 2.25rem;
+  padding-right: 2.25rem;
+  font-size: 0.875rem;
+  background-color: hsl(var(--background));
+  @include border(1px, solid, hsl(var(--input)));
+  @include rounded(0.375rem);
+  color: hsl(var(--foreground));
+  @include transition(all);
+  
+  &::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+  
+  &:focus {
+    outline: none;
+    @include border(2px, solid, hsl(var(--ring)));
+  }
+}
+
+.clearButton {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.5rem;
+  height: 1.5rem;
+  @include flex(row, center, center);
+  color: hsl(var(--muted-foreground));
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  @include rounded(0.25rem);
+  @include transition(all);
+  z-index: 1;
+  
+  &:hover {
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--accent));
+  }
+  
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.filtersSection {
+  margin-top: 1.5rem;
+}
+
+.filtersHeader {
+  @include flex(row, space-between, center);
+  margin-bottom: 0.75rem;
+}
+
+.filtersTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+}
+
+.selectAllButton {
+  font-size: 0.75rem;
+  color: hsl(var(--primary));
+  @include transition(text-decoration);
+  
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.filtersList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.filterItem {
+  @include flex(row, flex-start, center);
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  @include rounded(0.375rem);
+  @include transition(background-color);
+  
+  &:hover {
+    background-color: hsl(var(--accent) / 0.5);
+  }
+}
+
+.filterLabel {
+  font-size: 0.875rem;
+  color: hsl(var(--foreground));
+  @include transition(color);
+  
+  .filterItem:hover & {
+    color: hsl(var(--primary));
+  }
+}
+
+// Mini Calendar Styles
+.miniCalendarWrapper {
+  margin-bottom: 1rem;
+}
+
+.miniCalendar {
+  @include rounded(0.5rem);
+  border: none;
+  padding: 0;
+}
+
+.miniCalendarMonths {
+  width: 100%;
+}
+
+.miniCalendarMonth {
+  width: 100%;
+}
+
+.miniCalendarTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.miniCalendarHeadRow {
+  @include flex(row, flex-start, center);
+  width: 100%;
+}
+
+.miniCalendarHeadCell {
+  color: hsl(var(--muted-foreground));
+  @include rounded(0.375rem);
+  width: 2rem;
+  font-weight: 400;
+  font-size: 0.7rem;
+  flex: 1;
+  text-align: center;
+}
+
+.miniCalendarRow {
+  @include flex(row, flex-start, center);
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.miniCalendarCell {
+  text-align: center;
+  font-size: 0.875rem;
+  flex: 1;
+  position: relative;
+  
+  &:has([aria-selected]) {
+    background-color: hsl(var(--accent));
+    
+    &:first-child {
+      border-top-left-radius: 0.375rem;
+      border-bottom-left-radius: 0.375rem;
+    }
+    
+    &:last-child {
+      border-top-right-radius: 0.375rem;
+      border-bottom-right-radius: 0.375rem;
+    }
+  }
+  
+  &:focus-within {
+    position: relative;
+    z-index: 20;
+  }
+}
+
+.miniCalendarDay {
+  height: 2rem;
+  width: 2rem;
+  padding: 0;
+  font-weight: 400;
+  margin: 0 auto;
+  @include flex(row, center, center);
+  @include rounded(9999px);
+  @include transition(all);
+  font-size: 0.75rem;
+  
+  &[aria-selected] {
+    opacity: 1;
+  }
+  
+  &:hover {
+    background-color: hsl(var(--accent));
+  }
+}
+
+.miniCalendarDaySelected {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  
+  &:hover {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  
+  &:focus {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+}
+
+.miniCalendarDayToday {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  font-weight: 600;
+}
+
+.miniCalendarDayOutside {
+  color: hsl(var(--muted-foreground));
+  opacity: 0.5;
+  
+  &[aria-selected] {
+    background-color: hsl(var(--accent) / 0.5);
+    color: hsl(var(--muted-foreground));
+    opacity: 0.3;
+  }
+}
+
+.miniCalendarNav {
+  @include grid(3, auto, 0);
+  margin-bottom: 0.5rem;
+  position: relative;
+  width: 100%;
+  min-height: 1.75rem;
+  align-items: center;
+}
+
+.miniCalendarNavButton {
+  @include flex(row, center, center);
+  height: 1.75rem;
+  width: 1.75rem;
+  background-color: transparent;
+  padding: 0;
+  opacity: 0.7;
+  border: none;
+  cursor: pointer;
+  @include rounded(9999px);
+  color: hsl(var(--foreground));
+  @include transition(all);
+  flex-shrink: 0;
+  
+  &:hover {
+    opacity: 1;
+    background-color: hsl(var(--accent));
+  }
+  
+  &:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+  
+  svg {
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+  }
+}
+
+.miniCalendarNavButtonPrevious {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.miniCalendarNavButtonNext {
+  grid-column: 3;
+  justify-self: end;
+}
+
+.miniCalendarCaption {
+  @include flex(row, center, center);
+  padding-top: 0.25rem;
+  grid-column: 2;
+  align-items: center;
+  width: 100%;
+}
+
+.miniCalendarCaptionLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  color: hsl(var(--foreground));
+  text-align: center;
+}

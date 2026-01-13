@@ -1,9 +1,9 @@
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
-import { Button } from '../ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { CalendarView } from './types';
 import { CalendarLabels, defaultLabels } from './labels';
-import styles from './CalendarHeader.module.css';
+import styles from './CalendarHeader.module.scss';
+import { cn } from '../lib/utils';
 
 interface CalendarHeaderProps {
   currentDate: Date;
@@ -12,7 +12,6 @@ interface CalendarHeaderProps {
   onNext: () => void;
   onToday: () => void;
   onViewChange: (view: CalendarView) => void;
-  onAddEvent: () => void;
   labels?: CalendarLabels;
 }
 
@@ -23,7 +22,6 @@ export function CalendarHeader({
   onNext,
   onToday,
   onViewChange,
-  onAddEvent,
   labels = defaultLabels,
 }: CalendarHeaderProps) {
   const getTitle = () => {
@@ -45,23 +43,18 @@ export function CalendarHeader({
   return (
     <header className={styles.header}>
       <div className={styles.leftSection}>
-        <Button variant="create" size="lg" onClick={onAddEvent} className="gap-2">
-          <Plus className="h-5 w-5" />
-          {labels.create}
-        </Button>
-        
         <div className={styles.navigationButtons}>
-          <Button variant="ghost" size="icon" onClick={onPrevious}>
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={onNext}>
-            <ChevronRight className="h-5 w-5" />
-          </Button>
+          <button onClick={onPrevious} className={styles.navButton} type="button" aria-label="Previous">
+            <ChevronLeft />
+          </button>
+          <button onClick={onNext} className={styles.navButton} type="button" aria-label="Next">
+            <ChevronRight />
+          </button>
         </div>
         
-        <Button variant="outline" size="sm" onClick={onToday}>
+        <button onClick={onToday} className={styles.todayButton} type="button">
           {labels.today}
-        </Button>
+        </button>
         
         <h1 className={styles.title}>
           {getTitle()}
@@ -70,14 +63,14 @@ export function CalendarHeader({
 
       <div className={styles.viewSwitcher}>
         {(['month', 'week', 'day'] as CalendarView[]).map((v) => (
-          <Button
+          <button
             key={v}
-            variant={view === v ? 'default' : 'ghost'}
-            size="sm"
             onClick={() => onViewChange(v)}
+            className={cn(styles.viewButton, view === v && styles.viewButtonActive)}
+            type="button"
           >
             {viewLabels[v]}
-          </Button>
+          </button>
         ))}
       </div>
     </header>

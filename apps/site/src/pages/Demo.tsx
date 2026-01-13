@@ -1,84 +1,136 @@
-import { useState, useMemo } from 'react';
-import { ArrowLeft, Sun, Moon, Globe } from 'lucide-react';
-import { Calendar, CalendarEvent, defaultLabels, englishLabels, CustomFilter } from 'react-gcal';
+import { ArrowLeft, Globe, Moon, Sun } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Calendar, CalendarEvent, CustomFilter, defaultLabels, englishLabels } from 'react-gcal';
 import 'react-gcal/styles';
 
 type Language = 'pt' | 'en';
 
-const sampleEvents: CalendarEvent[] = [
-  {
-    id: '1',
-    title: 'Team Meeting',
-    date: new Date(),
-    startTime: '09:00',
-    endTime: '10:00',
-    color: 'peacock',
-    description: 'Weekly sync with the team',
-  },
-  {
-    id: '2',
-    title: 'Product Launch',
-    date: new Date(),
-    startTime: '14:00',
-    endTime: '16:00',
-    color: 'basil',
-    description: 'New feature release',
-  },
-  {
-    id: '3',
-    title: 'Design Review',
-    date: new Date(new Date().setDate(new Date().getDate() + 1)),
-    startTime: '11:00',
-    endTime: '12:00',
-    color: 'grape',
-    description: 'Review new UI designs',
-  },
-  {
-    id: '4',
-    title: 'Client Call',
-    date: new Date(new Date().setDate(new Date().getDate() + 2)),
-    startTime: '15:00',
-    endTime: '16:00',
-    color: 'tangerine',
-    description: 'Quarterly review with client',
-  },
-  {
-    id: '5',
-    title: 'Workshop',
-    date: new Date(new Date().setDate(new Date().getDate() - 1)),
-    startTime: '10:00',
-    endTime: '12:00',
-    color: 'lavender',
-    description: 'React best practices workshop',
-  },
-  {
-    id: '6',
-    title: 'Sprint Planning',
-    date: new Date(new Date().setDate(new Date().getDate() + 3)),
-    startTime: '09:00',
-    endTime: '11:00',
-    color: 'blueberry',
-    description: 'Plan next sprint tasks',
-  },
-];
+const generateMassiveEvents = (): CalendarEvent[] => {
+  const events: CalendarEvent[] = [];
+  const colors: CalendarEvent["color"][] = [
+    "tomato",
+    "peacock",
+    "blueberry",
+    "sage",
+    "banana",
+    "lavender",
+    "basil",
+    "tangerine",
+    "grape",
+    "graphite",
+  ];
+  
+  const eventTypes = [
+    { title: "Musica Popular Brasileira", type: "pop" },
+    { title: "Musica Popular Americana", type: "rock" },
+    { title: "Musica Popular Europia", type: "jazz" },
+    { title: "Musica Popular Africania", type: "hip-hop" },
+    { title: "Musica Popular Asiática", type: "classical" },
+    { title: "Musica Popular Australiana", type: "electronic" },
+    { title: "Musica Popular Chilena", type: "acoustic" },
+    { title: "Musica Popular Espanhola", type: "latin" },
+    { title: "Musica Popular Francesa", type: "r&b" },
+    { title: "Musica Popular Germanica", type: "pop" },
+    { title: "Musica Popular Italiana", type: "rock" },
+    { title: "Musica Popular Japonesa", type: "jazz" },
+  ];
+
+  // Start from 3 months ago, generate events until 1 month in the future
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset to midnight
+  const startDate = new Date(today);
+  startDate.setMonth(startDate.getMonth() - 3);
+  startDate.setHours(0, 0, 0, 0); // Reset to midnight
+  
+  const endDate = new Date(today);
+  endDate.setMonth(endDate.getMonth() + 1);
+  endDate.setHours(0, 0, 0, 0);
+  
+  // Calculate total days to generate (from 3 months ago to 1 month in the future = ~120 days)
+  const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+
+  let eventId = 0;
+
+  // Generate ~175 events per day for stress testing
+  for (let dayOffset = 0; dayOffset < totalDays; dayOffset++) {
+    const currentDate = new Date(startDate);
+    currentDate.setDate(currentDate.getDate() + dayOffset);
+    currentDate.setHours(0, 0, 0, 0); // Reset to midnight to avoid timezone issues
+
+    // 175 events per day for stress testing
+    const eventsPerDay = 175;
+
+    for (let i = 0; i < eventsPerDay; i++) {
+      const startHour = 3 + Math.floor(Math.random() * 18);
+      const duration = 1 + Math.floor(Math.random() * 8);
+      const endHour = Math.min(startHour + duration, 23);
+      const eventData = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+
+      events.push({
+        id: `event-${eventId++}`,
+        title: eventData.title,
+        type: eventData.type,
+        date: new Date(currentDate), // Date at midnight
+        startTime: `${startHour.toString().padStart(2, "0")}:00`,
+        endTime: `${endHour.toString().padStart(2, "0")}:59`,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        description: `Schedule ID: ${1000000 + eventId}`,
+      });
+    }
+  }
+
+  return events;
+};
 
 const customFilters: CustomFilter[] = [
   {
-    id: 'meetings',
-    label: 'Meetings',
-    predicate: (event) => event.title.toLowerCase().includes('meeting') || event.title.toLowerCase().includes('call'),
+    id: 'pop',
+    label: 'Pop',
+    predicate: (event) => event.type === 'pop',
   },
   {
-    id: 'reviews',
-    label: 'Reviews',
-    predicate: (event) => event.title.toLowerCase().includes('review'),
+    id: 'rock',
+    label: 'Rock',
+    predicate: (event) => event.type === 'rock',
   },
   {
-    id: 'planning',
-    label: 'Planning',
-    predicate: (event) => event.title.toLowerCase().includes('planning') || event.title.toLowerCase().includes('sprint'),
+    id: 'jazz',
+    label: 'Jazz',
+    predicate: (event) => event.type === 'jazz',
+  },
+  {
+    id: 'electronic',
+    label: 'Electronic',
+    predicate: (event) => event.type === 'electronic',
+  },
+  {
+    id: 'r&b',
+    label: 'R&B',
+    predicate: (event) => event.type === 'r&b',
+  },
+  {
+    id: 'latin',
+    label: 'Latin',
+    predicate: (event) => event.type === 'latin',
+  },
+  {
+    id: 'hip-hop',
+    label: 'Hip Hop',
+    predicate: (event) => event.type === 'hip-hop',
+  },
+  {
+    id: 'acoustic',
+    label: 'Acoustic',
+    predicate: (event) => event.type === 'acoustic',
+  },
+  {
+    id: 'classical',
+    label: 'Classical',
+    predicate: (event) => event.type === 'classical',
   },
 ];
+
+const sampleEvents = generateMassiveEvents();
 
 const Demo = () => {
   const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
@@ -182,6 +234,7 @@ const Demo = () => {
               onEventEdit={handleEventEdit}
               onEventDelete={handleEventDelete}
               onEventUpdate={handleEventUpdate}
+              maxVisibleEvents={6}
             />
           </div>
         </div>

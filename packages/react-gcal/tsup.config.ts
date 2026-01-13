@@ -1,5 +1,8 @@
 import { defineConfig } from 'tsup';
-import { sassPlugin } from 'esbuild-sass-plugin';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const { sassPlugin } = require('esbuild-sass-plugin');
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -17,7 +20,6 @@ export default defineConfig({
   esbuildPlugins: [
     sassPlugin({
       type: 'css',
-      cssImports: true,
     }),
   ],
   esbuildOptions(options) {
